@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Absensi Digital</title>
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        />
+
+        <link rel="stylesheet" href="style.css" />
+    </head>
+
+    <body>
+        <!-- =====================================================
+     LOGIN
+===================================================== -->
+
+        <div id="authPage" class="auth-page">
+            <div class="auth-box">
+                <div class="auth-logo">
+                    <i class="fa-solid fa-school"></i>
+                </div>
+
+                <h1>Absensi Digital</h1>
+
+                <p class="auth-subtitle">Sistem absensi siswa</p>
+
+                <!-- LOGIN USER -->
+
+                <div id="userLogin">
+                    <div class="login-title">
+                        <i class="fa-solid fa-user"></i>
+                        Login User
+                    </div>
+
+                    <form id="loginForm">
+                        <div class="input-group">
+                            <i class="fa-solid fa-user"></i>
+
+                            <input
+                                type="text"
+                                id="loginUsername"
+                                placeholder="Username"
+                                required
+                            />
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                placeholder="Password"
+                                required
+                            />
+                        </div>
+
+                        <button type="submit" class="primary-btn">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            Login User
+                        </button>
+                    </form>
+
+                    <button class="admin-login-btn" onclick="showAdminLogin()">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Login sebagai Admin
+                    </button>
+                </div>
+
+                <!-- LOGIN ADMIN -->
+
+                <div id="adminLogin" class="hidden">
+                    <div class="login-title admin-title">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        Login Admin
+                    </div>
+
+                    <form id="adminLoginForm">
+                        <div class="input-group">
+                            <i class="fa-solid fa-user-shield"></i>
+
+                            <input
+                                type="text"
+                                id="adminUsername"
+                                placeholder="Username Admin"
+                                required
+                            />
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                                type="password"
+                                id="adminPassword"
+                                placeholder="Password Admin"
+                                required
+                            />
+                        </div>
+
+                        <button type="submit" class="primary-btn">
+                            <i class="fa-solid fa-right-to-bracket"></i>
+                            Login Admin
+                        </button>
+                    </form>
+
+                    <button class="back-login-btn" onclick="showUserLogin()">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Kembali ke Login User
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+     APP
+===================================================== -->
+
+        <div id="app" class="app hidden">
+            <!-- SIDEBAR -->
+
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+
+                    <div>
+                        <strong>Absensi</strong>
+                        <span>Digital</span>
+                    </div>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <p class="nav-title">MENU</p>
+
+                    <button class="nav-item active" data-page="dashboard">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </button>
+
+                    <button class="nav-item" data-page="absen">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Absen</span>
+                    </button>
+
+                    <button class="nav-item" data-page="siswa">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Data Siswa</span>
+                    </button>
+
+                    <button class="nav-item" data-page="jadwal">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>Jadwal</span>
+                    </button>
+
+                    <button class="nav-item" data-page="kalender">
+                        <i class="fa-solid fa-calendar"></i>
+                        <span>Kalender</span>
+                    </button>
+
+                    <button class="nav-item" data-page="rekap">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>Rekap</span>
+                    </button>
+
+                    <button class="nav-item admin-only" data-page="users">
+                        <i class="fa-solid fa-user-gear"></i>
+                        <span>Manajemen User</span>
+                    </button>
+
+                    <button class="nav-item admin-only" data-page="lokasi">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Pengaturan Lokasi</span>
+                    </button>
+
+                    <p class="nav-title">AKUN</p>
+
+                    <button class="nav-item" data-page="profile">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Profile</span>
+                    </button>
+
+                    <button class="nav-item" data-page="pengaturan">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Pengaturan</span>
+                    </button>
+
+                    <!-- KELUAR AKUN -->
+
+                    <button class="nav-item logout-menu" onclick="logout()">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Keluar Akun</span>
+                    </button>
+                </nav>
+
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Keluar Akun
+                </button>
+            </aside>
+
+            <!-- MAIN -->
+
+            <main class="main-content">
+                <!-- TOPBAR -->
+
+                <header class="topbar">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <div class="topbar-title">
+                        <span id="pageTitle"> Dashboard </span>
+                    </div>
+
+                    <div class="topbar-user">
+                        <div class="mini-avatar" id="topAvatar">U</div>
+
+                        <div class="top-user-info">
+                            <strong id="topUsername"> User </strong>
+
+                            <span id="topRole"> User </span>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- =================================================
+             DASHBOARD
+        ================================================= -->
+
+                <section class="page active" id="page-dashboard">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Dashboard</h2>
+
+                            <p>
+                                Selamat datang kembali,
+                                <strong id="dashboardName"> User </strong>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="welcome-card">
+                        <div>
+                            <span class="welcome-small"> ABSENSI DIGITAL </span>
+
+                            <h2>Kelola kehadiran dengan mudah.</h2>
+
+                            <p>
+                                Lakukan absensi dengan selfie dan lokasi
+                                sekolah.
+                            </p>
+                        </div>
+
+                        <i class="fa-solid fa-fingerprint"></i>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+
+                            <div>
+                                <span> Total Siswa </span>
+
+                                <strong id="totalStudents"> 0 </strong>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+
+                            <div>
+                                <span> Hadir Hari Ini </span>
+
+                                <strong id="todayPresent"> 0 </strong>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon orange">
+                                <i class="fa-solid fa-file-circle-check"></i>
+                            </div>
+
+                            <div>
+                                <span> Izin </span>
+
+                                <strong id="todayPermission"> 0 </strong>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon red">
+                                <i class="fa-solid fa-bed"></i>
+                            </div>
+
+                            <div>
+                                <span> Sakit </span>
+
+                                <strong id="todaySick"> 0 </strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-grid">
+                        <button class="quick-card" onclick="goToPage('absen')">
+                            <i class="fa-solid fa-camera"></i>
+
+                            <div>
+                                <strong> Mulai Absen </strong>
+
+                                <span> Isi absensi hari ini </span>
+                            </div>
+                        </button>
+
+                        <button class="quick-card" onclick="goToPage('siswa')">
+                            <i class="fa-solid fa-users"></i>
+
+                            <div>
+                                <strong> Data Siswa </strong>
+
+                                <span> Lihat daftar siswa </span>
+                            </div>
+                        </button>
+
+                        <button class="quick-card" onclick="goToPage('rekap')">
+                            <i class="fa-solid fa-chart-column"></i>
+
+                            <div>
+                                <strong> Rekap </strong>
+
+                                <span> Lihat data absensi </span>
+                            </div>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             ABSEN
+        ================================================= -->
+
+                <section class="page" id="page-absen">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Absensi</h2>
+
+                            <p>Isi absensi kamu hari ini.</p>
+                        </div>
+                    </div>
+
+                    <div class="attendance-card">
+                        <div class="attendance-info">
+                            <div class="attendance-icon">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+
+                            <div>
+                                <h3>Absensi Hari Ini</h3>
+
+                                <p id="attendanceDate">-</p>
+                            </div>
+                        </div>
+
+                        <form id="attendanceForm">
+                            <!-- STATUS -->
+
+                            <div class="form-section">
+                                <label> Status Kehadiran </label>
+
+                                <div class="attendance-options">
+                                    <label class="attendance-option">
+                                        <input
+                                            type="radio"
+                                            name="attendanceStatus"
+                                            value="Hadir"
+                                            required
+                                        />
+
+                                        <div>
+                                            <i
+                                                class="fa-solid fa-circle-check"
+                                            ></i>
+
+                                            <span> Hadir </span>
+                                        </div>
+                                    </label>
+
+                                    <label class="attendance-option">
+                                        <input
+                                            type="radio"
+                                            name="attendanceStatus"
+                                            value="Izin"
+                                        />
+
+                                        <div>
+                                            <i
+                                                class="fa-solid fa-file-circle-check"
+                                            ></i>
+
+                                            <span> Izin </span>
+                                        </div>
+                                    </label>
+
+                                    <label class="attendance-option">
+                                        <input
+                                            type="radio"
+                                            name="attendanceStatus"
+                                            value="Sakit"
+                                        />
+
+                                        <div>
+                                            <i class="fa-solid fa-bed"></i>
+
+                                            <span> Sakit </span>
+                                        </div>
+                                    </label>
+
+                                    <!-- BOLOS KHUSUS ADMIN -->
+
+                                    <label
+                                        class="attendance-option admin-only"
+                                        id="bolosAttendanceOption"
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="attendanceStatus"
+                                            value="Bolos"
+                                        />
+
+                                        <div>
+                                            <i
+                                                class="fa-solid fa-user-xmark"
+                                            ></i>
+
+                                            <span> Bolos </span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- SELFIE -->
+
+                            <div class="form-section">
+                                <label> Foto Selfie </label>
+
+                                <div class="camera-box">
+                                    <video
+                                        id="cameraPreview"
+                                        autoplay
+                                        playsinline
+                                        class="hidden"
+                                    ></video>
+
+                                    <canvas
+                                        id="cameraCanvas"
+                                        class="hidden"
+                                    ></canvas>
+
+                                    <img
+                                        id="selfiePreview"
+                                        class="hidden"
+                                        alt="Preview selfie"
+                                    />
+
+                                    <div
+                                        class="camera-placeholder"
+                                        id="cameraPlaceholder"
+                                    >
+                                        <i class="fa-solid fa-camera"></i>
+
+                                        <span> Belum ada foto </span>
+                                    </div>
+                                </div>
+
+                                <div class="camera-buttons">
+                                    <button
+                                        type="button"
+                                        class="secondary-btn"
+                                        onclick="startCamera()"
+                                    >
+                                        <i class="fa-solid fa-video"></i>
+                                        Buka Kamera
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="primary-btn"
+                                        onclick="takeSelfie()"
+                                    >
+                                        <i class="fa-solid fa-camera"></i>
+                                        Ambil Selfie
+                                    </button>
+                                </div>
+
+                                <p class="camera-note">
+                                    Foto selfie wajib diambil.
+                                </p>
+                            </div>
+
+                            <!-- LOKASI -->
+
+                            <div class="form-section">
+                                <label> Lokasi </label>
+
+                                <div class="location-box">
+                                    <div class="location-status">
+                                        <i class="fa-solid fa-location-dot"></i>
+
+                                        <div>
+                                            <strong id="locationStatus">
+                                                Lokasi belum dikirim
+                                            </strong>
+
+                                            <span id="locationText">
+                                                Tekan tombol untuk mengambil
+                                                lokasi.
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        class="secondary-btn"
+                                        onclick="getAttendanceLocation()"
+                                    >
+                                        <i
+                                            class="fa-solid fa-location-crosshairs"
+                                        ></i>
+
+                                        Kirim Lokasi
+                                    </button>
+                                </div>
+
+                                <p class="camera-note">Lokasi wajib dikirim.</p>
+                            </div>
+
+                            <!-- KETERANGAN -->
+
+                            <div class="form-section">
+                                <label for="attendanceNote"> Keterangan </label>
+
+                                <textarea
+                                    id="attendanceNote"
+                                    placeholder="Tulis keterangan jika diperlukan..."
+                                    rows="4"
+                                ></textarea>
+
+                                <p class="camera-note">
+                                    Keterangan boleh dikosongkan.
+                                </p>
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="primary-btn attendance-submit"
+                            >
+                                <i class="fa-solid fa-paper-plane"></i>
+
+                                Kirim Absensi
+                            </button>
+                        </form>
+
+                        <div
+                            id="attendanceResult"
+                            class="attendance-result hidden"
+                        ></div>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             DATA SISWA
+        ================================================= -->
+
+                <section class="page" id="page-siswa">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Data Siswa</h2>
+
+                            <p>Informasi siswa yang terdaftar.</p>
+                        </div>
+
+                        <button
+                            class="primary-btn admin-only"
+                            onclick="openStudentModal()"
+                        >
+                            <i class="fa-solid fa-user-plus"></i>
+
+                            Tambah Siswa
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+
+                            <input
+                                type="text"
+                                id="studentSearch"
+                                placeholder="Cari siswa..."
+                            />
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+
+                                        <th>NIS</th>
+
+                                        <th>Nama</th>
+
+                                        <th>Kelas</th>
+
+                                        <th class="admin-only">Aksi</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="studentTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             JADWAL
+        ================================================= -->
+
+                <section class="page" id="page-jadwal">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Jadwal</h2>
+
+                            <p>Jadwal pelajaran.</p>
+                        </div>
+                    </div>
+
+                    <div class="schedule-grid" id="scheduleList"></div>
+                </section>
+
+                <!-- =================================================
+             KALENDER
+        ================================================= -->
+
+                <section class="page" id="page-kalender">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Kalender</h2>
+
+                            <p>Kalender sekolah.</p>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card">
+                        <div class="calendar-header">
+                            <button onclick="changeMonth(-1)">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+
+                            <h3 id="calendarTitle">-</h3>
+
+                            <button onclick="changeMonth(1)">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="calendar-grid" id="calendarGrid"></div>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             REKAP
+        ================================================= -->
+
+                <section class="page" id="page-rekap">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Rekap Absensi</h2>
+
+                            <p>Data siswa dan absensi dalam 20 jam terakhir.</p>
+                        </div>
+                    </div>
+
+                    <div class="recap-window-info">
+                        <div>
+                            <i class="fa-solid fa-clock"></i>
+
+                            <div>
+                                <strong>Rekap 20 Jam</strong>
+                                <span>
+                                    Hanya data absensi dari 20 jam terakhir yang
+                                    ditampilkan.
+                                </span>
+                            </div>
+                        </div>
+
+                        <span class="recap-live-badge">
+                            <i class="fa-solid fa-circle"></i>
+                            Aktif
+                        </span>
+                    </div>
+
+                    <div class="card recap-card">
+                        <div class="recap-table-wrapper">
+                            <table class="recap-student-table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>NIS</th>
+                                        <th>Nama</th>
+                                        <th>Kelas</th>
+                                        <th>Status Terakhir</th>
+                                        <th>Jam</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="recapTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             DETAIL REKAP SISWA
+        ================================================= -->
+
+                <div id="recapDetailModal" class="modal hidden">
+                    <div class="modal-box recap-detail-modal">
+                        <div class="modal-header">
+                            <div>
+                                <h2 id="recapDetailTitle">Detail Absensi</h2>
+
+                                <p id="recapDetailSubtitle">-</p>
+                            </div>
+
+                            <button onclick="closeRecapDetail()">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <div
+                            id="recapDetailContent"
+                            class="recap-detail-content"
+                        ></div>
+                    </div>
+                </div>
+
+                <!-- =================================================
+             USER MANAGEMENT
+        ================================================= -->
+
+                <section class="page" id="page-users">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Manajemen User</h2>
+
+                            <p>Daftar akun siswa.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+
+                                        <th>Username</th>
+
+                                        <th>Nama</th>
+
+                                        <th>Role</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="userTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             LOKASI
+        ================================================= -->
+
+                <section class="page" id="page-lokasi">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Pengaturan Lokasi</h2>
+
+                            <p>Pengaturan lokasi sekolah.</p>
+                        </div>
+                    </div>
+
+                    <div class="card location-settings">
+                        <label> Nama lokasi sekolah </label>
+
+                        <input
+                            type="text"
+                            id="schoolLocationName"
+                            placeholder="Contoh: SMK PPLG"
+                        />
+
+                        <label> Latitude </label>
+
+                        <input
+                            type="text"
+                            id="schoolLatitude"
+                            placeholder="-6.123456"
+                        />
+
+                        <label> Longitude </label>
+
+                        <input
+                            type="text"
+                            id="schoolLongitude"
+                            placeholder="106.123456"
+                        />
+
+                        <button
+                            class="primary-btn"
+                            onclick="saveSchoolLocation()"
+                        >
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Simpan Lokasi
+                        </button>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             PROFILE
+        ================================================= -->
+
+                <section class="page" id="page-profile">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Profile</h2>
+
+                            <p>Informasi akun kamu.</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="big-avatar" id="profileAvatar">U</div>
+
+                        <h2 id="profileUsername">User</h2>
+
+                        <span class="role-badge" id="profileRole"> User </span>
+
+                        <div class="profile-details">
+                            <div>
+                                <span> Username </span>
+
+                                <strong id="profileUsername2"> - </strong>
+                            </div>
+
+                            <div>
+                                <span> Nama </span>
+
+                                <strong id="profileName"> - </strong>
+                            </div>
+                        </div>
+
+                        <!-- HANYA USER -->
+
+                        <button
+                            class="primary-btn edit-profile-btn user-only"
+                            onclick="openEditProfile()"
+                        >
+                            <i class="fa-solid fa-pen"></i>
+
+                            Edit Profile
+                        </button>
+
+                        <!-- ADMIN -->
+
+                        <div class="admin-profile-note admin-only">
+                            <i class="fa-solid fa-lock"></i>
+
+                            Profile admin tidak dapat diubah.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- =================================================
+             PENGATURAN
+        ================================================= -->
+
+                <section class="page" id="page-pengaturan">
+                    <div class="page-heading">
+                        <div>
+                            <h2>Pengaturan</h2>
+
+                            <p>Pengaturan aplikasi.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <div class="setting-item">
+                            <div>
+                                <strong> Mode Gelap </strong>
+
+                                <span> Gunakan tampilan gelap. </span>
+                            </div>
+
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle" />
+
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div>
+                                <strong> Export Data </strong>
+
+                                <span> Simpan data aplikasi. </span>
+                            </div>
+
+                            <button
+                                class="secondary-btn"
+                                onclick="exportData()"
+                            >
+                                <i class="fa-solid fa-download"></i>
+
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- =====================================================
+     EDIT PROFILE
+===================================================== -->
+
+        <div id="editProfileModal" class="modal hidden">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h2>Edit Profile</h2>
+
+                    <button onclick="closeEditProfile()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <form id="editProfileForm">
+                    <label> Username </label>
+
+                    <input type="text" id="editUsername" required />
+
+                    <label> Nama Profile </label>
+
+                    <input type="text" id="editName" required />
+
+                    <label> Password Baru </label>
+
+                    <input
+                        type="password"
+                        id="editPassword"
+                        placeholder="Kosongkan jika tidak diubah"
+                    />
+
+                    <button type="submit" class="primary-btn">
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Simpan Perubahan
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- =====================================================
+     STUDENT MODAL
+===================================================== -->
+
+        <div id="studentModal" class="modal hidden">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h2 id="studentModalTitle">Tambah Siswa</h2>
+
+                    <button onclick="closeStudentModal()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <form id="studentForm">
+                    <input type="hidden" id="studentEditIndex" />
+
+                    <label> NIS </label>
+
+                    <input type="text" id="studentNis" required />
+
+                    <label> Nama Siswa </label>
+
+                    <input type="text" id="studentName" required />
+
+                    <label> Kelas </label>
+
+                    <input
+                        type="text"
+                        id="studentClass"
+                        placeholder="Contoh: X PPLG 1"
+                        required
+                    />
+
+                    <button type="submit" class="primary-btn">
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Simpan Siswa
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
