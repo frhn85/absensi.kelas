@@ -818,7 +818,7 @@ td {
 .icon-btn.danger:hover {
     color: var(--red);
 
-    border-color: var(--red);
+    border-color: var(--blue-glow);
 }
 
 
@@ -2154,12 +2154,6 @@ td {
         width: 100%;
     }
 
-    .recap-student-table td[data-label="Aksi"] {
-        padding-top: 10px;
-        margin-top: 4px;
-        border-top: 1px solid var(--border);
-    }
-
     .recap-detail-btn {
         width: 100%;
     }
@@ -2368,4 +2362,519 @@ th{background:#0f1828;color:#748197;text-transform:uppercase;font-size:10px;lett
         z-index: 1001;
     }
 
+}
+
+/* form absen sederhana */
+.attendance-input {
+    width: 100%;
+    padding: 13px 15px;
+    border-radius: 11px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--text);
+    outline: none;
+}
+
+.attendance-input:focus,
+#attendanceNote:focus {
+    border-color: var(--primary);
+}
+
+#attendanceNote {
+    width: 100%;
+    padding: 13px 15px;
+    border-radius: 11px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--text);
+    outline: none;
+    resize: vertical;
+}
+
+
+/* REKAP ABSENSI */
+#page-rekap .recap-student-table {
+    width: 100%;
+    table-layout: auto;
+}
+
+#page-rekap .delete-attendance-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #7f1d1d;
+    border-radius: 9px;
+    background: #451a1a;
+    color: #fca5a5;
+    cursor: pointer;
+}
+
+#page-rekap .recap-student-table td:last-child {
+    width: 55px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+@media (max-width: 600px) {
+    #page-rekap .recap-student-table,
+    #page-rekap .recap-student-table tbody,
+    #page-rekap .recap-student-table tr,
+    #page-rekap .recap-student-table td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #page-rekap .recap-student-table thead {
+        display: none;
+    }
+
+    #page-rekap .recap-student-table tbody tr {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border: 1px solid #1e293b;
+        border-radius: 14px;
+        background: #0e1524;
+    }
+
+    #page-rekap .recap-student-table td {
+        padding: 0;
+        border: none;
+        white-space: normal;
+        text-align: left;
+        overflow-wrap: anywhere;
+    }
+
+    #page-rekap .recap-student-table td::before {
+        display: block;
+        margin-bottom: 6px;
+        color: #8190a8;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    #page-rekap td:nth-child(1)::before { content: "NAMA"; }
+    #page-rekap td:nth-child(2)::before { content: "KELAS"; }
+    #page-rekap td:nth-child(3)::before { content: "TANGGAL"; }
+    #page-rekap td:nth-child(4)::before { content: "STATUS"; }
+    #page-rekap td:nth-child(5)::before { content: "JAM"; }
+
+    #page-rekap .recap-student-table td:last-child {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: flex-end;
+        border-top: 1px solid #1e293b;
+        padding-top: 10px;
+    }
+
+    #page-rekap .recap-student-table td:last-child::before {
+        content: "";
+        display: none;
+    }
+
+    #page-rekap .recap-table-wrapper {
+        overflow: visible;
+    }
+}
+
+
+@media (max-width: 600px) {
+    #page-rekap .recap-student-table tbody tr {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #page-rekap .recap-student-table td:nth-child(5) {
+        grid-column: 1;
+    }
+
+    #page-rekap .recap-student-table td:last-child {
+        grid-column: 2;
+        grid-row: 3;
+        align-self: end;
+        justify-content: flex-end;
+        border-top: none;
+        padding-top: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    #page-rekap .recap-student-table td:last-child {
+        transform: translate(-22px, -2px);
+    }
+}
+
+/* =====================================================
+   PREMIUM FINISH — visual polish
+   Ditambahkan tanpa menghapus style dan fungsi yang sudah ada
+===================================================== */
+
+:root {
+    color-scheme: dark;
+    --surface-glass: rgba(13, 20, 34, 0.82);
+    --surface-raised: #111b2d;
+    --line-soft: rgba(139, 164, 207, 0.13);
+    --line-strong: rgba(111, 145, 211, 0.24);
+    --blue-glow: rgba(77, 124, 255, 0.12);
+}
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+}
+
+body {
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    color: #fff;
+    background: rgba(77, 124, 255, 0.42);
+}
+
+button,
+input,
+textarea,
+select {
+    font-size: 14px;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+    outline: 2px solid #82a2ff;
+    outline-offset: 3px;
+}
+
+.sidebar {
+    background:
+        linear-gradient(180deg, rgba(14, 23, 40, 0.98), rgba(7, 12, 22, 0.99));
+    border-right-color: var(--line-soft);
+}
+
+.sidebar-logo {
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.logo-icon {
+    box-shadow: 0 8px 24px rgba(77, 124, 255, 0.12);
+}
+
+.nav-item {
+    min-height: 43px;
+    transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.nav-item:active,
+.quick-card:active,
+.primary-btn:active,
+.secondary-btn:active {
+    transform: scale(0.985);
+}
+
+.nav-item.active {
+    background: linear-gradient(100deg, rgba(77, 124, 255, 0.17), rgba(77, 124, 255, 0.055));
+    border-color: rgba(77, 124, 255, 0.2);
+    box-shadow: inset 3px 0 #648aff;
+}
+
+.topbar {
+    border-bottom-color: var(--line-soft);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.topbar-title {
+    letter-spacing: -0.025em;
+}
+
+.page-heading h2 {
+    line-height: 1.2;
+}
+
+.page-heading p {
+    line-height: 1.65;
+}
+
+.welcome-card {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 85% 15%, rgba(77, 124, 255, 0.17), transparent 42%),
+        linear-gradient(120deg, #101b30, #0c1422 72%);
+    border-color: rgba(100, 139, 224, 0.22);
+}
+
+.welcome-card::after {
+    content: "";
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    right: -85px;
+    bottom: -120px;
+    border: 1px solid rgba(130, 162, 255, 0.16);
+    border-radius: 50%;
+    box-shadow: 0 0 0 22px rgba(130, 162, 255, 0.025),
+                0 0 0 46px rgba(130, 162, 255, 0.02);
+    pointer-events: none;
+}
+
+.stat-card,
+.quick-card,
+.card,
+.attendance-card,
+.calendar-card,
+.profile-card,
+.settings-card,
+.schedule-card,
+.recap-window-info,
+.recap-card {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.stat-card,
+.quick-card,
+.schedule-card {
+    border-color: var(--line-soft);
+}
+
+.stat-card:hover,
+.quick-card:hover,
+.schedule-card:hover {
+    border-color: var(--line-strong);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.card,
+.attendance-card,
+.calendar-card,
+.profile-card,
+.settings-card,
+.recap-card {
+    border-color: var(--line-soft);
+}
+
+.primary-btn {
+    border: 1px solid rgba(151, 177, 255, 0.22);
+    background: linear-gradient(135deg, #5a86ff, #3e69e8);
+    box-shadow: 0 7px 20px rgba(53, 99, 225, 0.18);
+    transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+
+.primary-btn:hover {
+    box-shadow: 0 10px 26px rgba(53, 99, 225, 0.26);
+}
+
+.secondary-btn,
+.admin-login-btn,
+.back-login-btn,
+.logout-btn {
+    transition: border-color .18s ease, background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.input-group input,
+.search-box input,
+.location-settings input,
+.modal-box input,
+.modal-box textarea,
+.attendance-input,
+#attendanceNote {
+    min-height: 45px;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.input-group input::placeholder,
+.search-box input::placeholder,
+.modal-box input::placeholder,
+.modal-box textarea::placeholder,
+.attendance-input::placeholder,
+#attendanceNote::placeholder {
+    color: #65738a;
+}
+
+.table-wrapper,
+.recap-table-wrapper {
+    border-color: var(--line-soft);
+    border-radius: 14px;
+}
+
+table {
+    border-spacing: 0;
+}
+
+thead th {
+    font-weight: 700;
+}
+
+tbody tr {
+    transition: background .15s ease;
+}
+
+.icon-btn {
+    transition: color .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.attendance-option div {
+    min-height: 112px;
+    justify-content: center;
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.attendance-option input:checked + div {
+    box-shadow: 0 0 0 1px rgba(77, 124, 255, 0.16),
+                0 8px 22px rgba(30, 67, 150, 0.10);
+}
+
+.camera-box {
+    background-image: radial-gradient(circle at center, rgba(77, 124, 255, 0.045), transparent 62%);
+}
+
+.location-box {
+    border-color: var(--line-soft);
+}
+
+.modal {
+    padding: 18px;
+}
+
+.modal-box {
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.58);
+}
+
+.modal-header {
+    gap: 14px;
+}
+
+.profile-details div {
+    transition: border-color .18s ease, background .18s ease;
+}
+
+.profile-details div:hover {
+    border-color: var(--line-strong);
+}
+
+.recap-list-row,
+#page-rekap .recap-student-table tbody tr {
+    transition: background .18s ease, border-color .18s ease;
+}
+
+.recap-detail-btn,
+#page-rekap .delete-attendance-btn {
+    transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+
+.auth-page {
+    padding: 24px;
+}
+
+.auth-box {
+    border-color: rgba(123, 151, 210, 0.2);
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(77, 124, 255, 0.07), transparent 52%),
+        rgba(11, 18, 32, 0.97);
+    backdrop-filter: blur(18px);
+}
+
+.auth-logo {
+    box-shadow: 0 10px 30px rgba(77, 124, 255, 0.12);
+}
+
+@media (min-width: 1200px) {
+    .page {
+        padding: 32px 36px;
+    }
+
+    .page-heading {
+        margin-bottom: 26px;
+    }
+
+    .welcome-card {
+        padding: 32px;
+    }
+
+    .stats-grid,
+    .quick-grid,
+    .schedule-grid {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 700px) {
+    html {
+        scrollbar-gutter: auto;
+    }
+
+    .auth-page {
+        padding: 16px;
+    }
+
+    .auth-box {
+        padding: 26px 21px;
+        border-radius: 20px;
+    }
+
+    .page-heading {
+        gap: 8px;
+    }
+
+    .welcome-card {
+        padding: 20px;
+    }
+
+    .stat-card {
+        min-width: 0;
+        gap: 10px;
+    }
+
+    .stat-icon {
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .stat-card span {
+        line-height: 1.35;
+    }
+
+    .attendance-option div {
+        min-height: 76px;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 16px;
+    }
+
+    .modal {
+        align-items: center;
+        padding: 12px;
+    }
+
+    .modal-box {
+        max-height: 92dvh;
+        padding: 19px;
+        border-radius: 17px;
+    }
+
+    .setting-item {
+        gap: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
