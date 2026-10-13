@@ -1044,22 +1044,15 @@ function renderSchedules() {
    RECAP
 ===================================================== */
 
+
 async function loadAttendanceFromSupabase() {
   if (!currentUser?.id) return;
 
   try {
-    let query = supabaseClient
+    const { data, error } = await supabaseClient
       .from("absensi")
       .select("*")
       .order("tanggal", { ascending: false });
-
-    // Admin bisa melihat semua data.
-    // Pengguna biasa hanya melihat absensinya sendiri.
-    if (currentUser.role !== "admin") {
-      query = query.eq("user_id", currentUser.id);
-    }
-
-    const { data, error } = await query;
 
     if (error) throw error;
 
@@ -1082,60 +1075,6 @@ async function loadAttendanceFromSupabase() {
   }
 }
 
-
-function renderRecap() {
-  const container = $("recapTableBody");
-  if (!container) return;
-
-  const sorted = [...attendance].sort((a, b) =>
-    `${b.date} ${b.createdAt || ""}`.localeCompare(
-      `${a.date} ${a.createdAt || ""}`
-    )
-  );
-
-  container.innerHTML = sorted.map(item => {
-    let jam = "-";
-
-    if (item.createdAt) {
-      jam = new Date(item.createdAt).toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      });
-    } else if (item.time) {
-      jam = item.time;
-    }
-
-    return `
-    <tr>
-        <td>${escapeHTML(item.name || "-")}</td>
-        <td>${escapeHTML(item.className || "-")}</td>
-        <td>${escapeHTML(item.date || "-")}</td>
-        <td>${escapeHTML(item.status || "-")}</td>
-        <td>${escapeHTML(jam)}</td>
-        <td>
-            ${currentUser?.role === "admin" ? `
-                <button
-                    class="delete-attendance-btn"
-                    onclick="deleteAttendance('${escapeHTML(item.id)}')"
-                    title="Hapus absensi"
-                    aria-label="Hapus absensi">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            ` : ""}
-        </td>
-    </tr>
-`;
-  }).join("");
-
-  if (!sorted.length) {
-    container.innerHTML = `
-            <tr>
-                <td colspan="6">Belum ada data absensi.</td>
-            </tr>
-        `;
-  }
-}
 
 /* =====================================================
    USER MANAGEMENT
