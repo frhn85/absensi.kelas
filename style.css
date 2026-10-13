@@ -818,7 +818,7 @@ td {
 .icon-btn.danger:hover {
     color: var(--red);
 
-    border-color: var(--blue-glow);
+    border-color: var(--red);
 }
 
 

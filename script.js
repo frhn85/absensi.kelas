@@ -1,3 +1,13 @@
+
+/* KONEKSI SUPABASE */
+const SUPABASE_URL = "https://qhvzzhpdpixbfanisyuk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_lwAxMjPMtEMY3CXtnrPZDQ_5yigxtwY";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 const DEFAULT_USERS = Array.from({ length: 36 }, (_, i) => ({
   username: `siswa${i + 1}`,
   password: "12345",
@@ -176,7 +186,7 @@ function formatTime(date) {
 
 /* INIT */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   setupLogin();
   setupNavigation();
   setupAttendance();
@@ -189,56 +199,107 @@ document.addEventListener("DOMContentLoaded", () => {
   setupModals();
   setupSchoolLocation();
 
-  if (currentUser) {
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error) throw error;
+
+    const session = data.session;
+
+    if (!session) {
+      currentUser = null;
+      localStorage.removeItem("currentUser");
+      showLoginPage();
+      return;
+    }
+
+    const { data: profile, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("id, username, role")
+        .eq("id", session.user.id)
+        .single();
+
+    if (profileError) throw profileError;
+
+    currentUser = {
+      id: session.user.id,
+      username: profile.username,
+      name: profile.role === "admin" ? "Admin PPLG 1" : profile.username,
+      role: profile.role
+    };
+
+    saveCurrentUser();
     openApp();
-  } else {
+  } catch (error) {
+    console.error("Pemulihan sesi gagal:", error.message);
+    currentUser = null;
+    localStorage.removeItem("currentUser");
     showLoginPage();
   }
 });
 
+
 /* LOGIN */
 
+
 function setupLogin() {
-  $("loginForm")?.addEventListener("submit", e => {
+  $("loginForm")?.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const username = $("loginUsername")?.value.trim();
-    const password = $("loginPassword")?.value;
-
-    const user = users.find(
-      u => u.username === username && u.password === password
-    );
-
-    if (!user) {
-      alert("Username atau password salah.");
-      return;
-    }
-
-    currentUser = { ...user, role: "user" };
-    saveCurrentUser();
-    openApp();
+    alert("Login siswa Supabase akan diaktifkan setelah akun siswa dipetakan.");
   });
 
-  $("adminLoginForm")?.addEventListener("submit", e => {
+  $("adminLoginForm")?.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const username = $("adminUsername")?.value.trim();
-    const password = $("adminPassword")?.value;
+    const email = $("adminUsername")?.value.trim() || "";
+    const password = $("adminPassword")?.value || "";
 
-    const admin = admins.find(
-      a => a.username === username && a.password === password
-    );
-
-    if (!admin) {
-      alert("Username atau password admin salah.");
+    if (!email || !password) {
+      alert("Masukkan email dan password Supabase.");
       return;
     }
 
-    currentUser = { ...admin, role: "admin" };
-    saveCurrentUser();
-    openApp();
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      const { data: profile, error: profileError } =
+        await supabaseClient
+          .from("profiles")
+          .select("id, username, role")
+          .eq("id", data.user.id)
+          .single();
+
+      if (profileError) throw profileError;
+
+      if (profile.role !== "admin") {
+        await supabaseClient.auth.signOut();
+        alert("Akun ini bukan admin.");
+        return;
+      }
+
+      currentUser = {
+        id: data.user.id,
+        username: profile.username,
+        name: "Admin PPLG 1",
+        role: "admin"
+      };
+
+      saveCurrentUser();
+      openApp();
+    } catch (error) {
+      console.error("Login admin gagal:", error.message);
+      alert("Login gagal. Periksa email, password, dan profil admin.");
+    }
   });
 }
+
 
 function showAdminLogin() {
   hide($("userLogin"));
@@ -270,12 +331,14 @@ function openApp() {
   renderStudents();
   renderSchedules();
   renderCalendar();
-  renderRecap();
   renderUsers();
   renderProfile();
   renderSchoolLocation();
 
   goToPage("dashboard");
+
+  // Muat rekap dari Supabase
+  loadAttendanceFromSupabase();
 }
 
 function updateUserUI() {
@@ -396,17 +459,25 @@ function closeSidebar() {
 
 /* LOGOUT */
 
-function logout() {
-  stopCamera();
-  currentUser = null;
-  selfieData = null;
-  attendanceLocation = null;
 
-  localStorage.removeItem("currentUser");
+async function logout() {
+  try {
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      console.error("Logout Supabase gagal:", error.message);
+    }
+  } finally {
+    stopCamera();
+    currentUser = null;
+    selfieData = null;
+    attendanceLocation = null;
 
-  closeSidebar();
-  showLoginPage();
+    localStorage.removeItem("currentUser");
+    closeSidebar();
+    showLoginPage();
+  }
 }
+
 
 /* DASHBOARD */
 
@@ -474,11 +545,12 @@ function setAttendanceDefaults() {
   }
 }
 
-function submitAttendance(e) {
+
+async function submitAttendance(e) {
   e.preventDefault();
 
-  if (!currentUser) {
-    alert("Silakan login terlebih dahulu.");
+  if (!currentUser || !currentUser.id) {
+    alert("Sesi login tidak valid. Silakan login ulang.");
     return;
   }
 
@@ -492,73 +564,74 @@ function submitAttendance(e) {
   const date = $("attendanceDateInput")?.value || "";
   const note = $("attendanceNote")?.value.trim() || "";
 
-  if (!status) {
-    alert("Pilih status kehadiran.");
+  if (!status || !["Hadir", "Izin", "Sakit"].includes(status)) {
+    alert("Pilih status kehadiran yang valid.");
     return;
   }
 
-  if (!["Hadir", "Izin", "Sakit"].includes(status)) {
-    alert("Status kehadiran tidak valid.");
+  if (!name || !className || !date) {
+    alert("Nama, kelas, dan tanggal wajib diisi.");
     return;
   }
 
-  if (!name) {
-    alert("Nama wajib diisi.");
-    return;
-  }
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabaseClient.auth.getSession();
 
-  if (!className) {
-    alert("Kelas wajib diisi.");
-    return;
-  }
+    if (sessionError) throw sessionError;
 
-  if (!date) {
-    alert("Tanggal wajib diisi.");
-    return;
-  }
+    const session = sessionData.session;
 
-  const student =
-    students.find(s => s.username === currentUser.username) ||
-    students.find(s => s.name === name);
+    if (!session || session.user.id !== currentUser.id) {
+      throw new Error("Sesi Supabase tidak cocok. Silakan login ulang.");
+    }
 
-  const existingIndex = attendance.findIndex(item =>
-    item.username === currentUser.username &&
-    item.date === date
-  );
+    const { error } = await supabaseClient
+      .from("absensi")
+      .insert({
+        user_id: session.user.id,
+        username: currentUser.username,
+        nama: name,
+        kelas: className,
+        tanggal: date,
+        status: status,
+        keterangan: note || null
+      });
 
-  const record = {
-    id: existingIndex >= 0
-      ? attendance[existingIndex].id
-      : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    username: currentUser.username,
-    name,
-    className,
-    date,
-    status,
-    note,
-    studentId: student?.id || null,
-    createdAt: new Date().toISOString()
-  };
+    if (error) throw error;
 
-  if (existingIndex >= 0) {
-    attendance[existingIndex] = record;
-  } else {
+    const record = {
+      id: `cloud-${Date.now()}`,
+      username: currentUser.username,
+      name,
+      className,
+      date,
+      status,
+      note,
+      studentId: null,
+      createdAt: new Date().toISOString()
+    };
+
     attendance.push(record);
+    saveAttendance();
+
+    $("attendanceForm")?.reset();
+    setAttendanceDefaults();
+
+    document.querySelectorAll(
+      'input[name="attendanceStatus"]'
+    ).forEach(input => {
+      input.checked = false;
+    });
+
+    renderDashboard();
+    renderRecap();
+
+    alert("Absensi berhasil disimpan ke Supabase.");
+  } catch (error) {
+    console.error("Gagal menyimpan absensi:", error);
+    alert("Absensi gagal disimpan: " + error.message);
   }
-
-  saveAttendance();
-
-  $("attendanceForm")?.reset();
-  setAttendanceDefaults();
-
-  document.querySelectorAll('input[name="attendanceStatus"]').forEach(input => {
-    input.checked = false;
-  });
-
-  renderDashboard();
-  renderRecap();
-
-  alert("Absensi berhasil disimpan.");
 }
 
 /* =====================================================
@@ -921,6 +994,45 @@ function renderSchedules() {
 /* =====================================================
    RECAP
 ===================================================== */
+
+async function loadAttendanceFromSupabase() {
+  if (!currentUser?.id) return;
+
+  try {
+    let query = supabaseClient
+      .from("absensi")
+      .select("*")
+      .order("tanggal", { ascending: false });
+
+    // Admin bisa melihat semua data.
+    // Pengguna biasa hanya melihat absensinya sendiri.
+    if (currentUser.role !== "admin") {
+      query = query.eq("user_id", currentUser.id);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    attendance = (data || []).map(item => ({
+      id: String(item.id),
+      username: item.username || "",
+      name: item.nama || "",
+      className: item.kelas || "",
+      date: item.tanggal || "",
+      status: item.status || "",
+      note: item.keterangan || "",
+      createdAt: item.created_at || ""
+    }));
+
+    saveAttendance();
+    renderRecap();
+  } catch (error) {
+    console.error("Gagal memuat rekap Supabase:", error);
+    alert("Gagal memuat rekap: " + error.message);
+  }
+}
+
 
 function renderRecap() {
   purgeExpiredAttendance();
