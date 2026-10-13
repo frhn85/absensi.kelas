@@ -202,7 +202,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const { data, error } = await supabaseClient.auth.getSession();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Detail error hapus:", error);
+      alert(
+        "Gagal menghapus: " +
+        error.message +
+        "\nKode: " +
+        error.code
+      );
+      return;
+    }
 
     const session = data.session;
 
@@ -1040,10 +1049,10 @@ function renderSchedules() {
     `).join("");
 }
 
+
 /* =====================================================
    RECAP
 ===================================================== */
-
 
 async function loadAttendanceFromSupabase() {
   if (!currentUser?.id) return;
@@ -1069,9 +1078,65 @@ async function loadAttendanceFromSupabase() {
 
     saveAttendance();
     renderRecap();
+
   } catch (error) {
     console.error("Gagal memuat rekap Supabase:", error);
     alert("Gagal memuat rekap: " + error.message);
+  }
+}
+
+
+function renderRecap() {
+  const container = $("recapTableBody");
+  if (!container) return;
+
+  const sorted = [...attendance].sort((a, b) =>
+    `${b.date} ${b.createdAt || ""}`.localeCompare(
+      `${a.date} ${a.createdAt || ""}`
+    )
+  );
+
+  container.innerHTML = sorted.map(item => {
+    let jam = "-";
+
+    if (item.createdAt) {
+      jam = new Date(item.createdAt).toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+    } else if (item.time) {
+      jam = item.time;
+    }
+
+    return `
+      <tr>
+        <td>${escapeHTML(item.name || "-")}</td>
+        <td>${escapeHTML(item.className || "-")}</td>
+        <td>${escapeHTML(item.date || "-")}</td>
+        <td>${escapeHTML(item.status || "-")}</td>
+        <td>${escapeHTML(jam)}</td>
+        <td>
+          ${currentUser?.role === "admin" ? `
+            <button
+              class="delete-attendance-btn"
+              onclick="deleteAttendance('${escapeHTML(item.id)}')"
+              title="Hapus absensi"
+              aria-label="Hapus absensi">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          ` : ""}
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  if (!sorted.length) {
+    container.innerHTML = `
+      <tr>
+        <td colspan="6">Belum ada data absensi.</td>
+      </tr>
+    `;
   }
 }
 
