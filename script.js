@@ -517,7 +517,6 @@ function closeSidebar() {
 
 /* LOGOUT */
 
-
 async function logout() {
   try {
     const { error } = await supabaseClient.auth.signOut();
@@ -1035,19 +1034,52 @@ function resetStudentForm() {
    SCHEDULES
 ===================================================== */
 
-function renderSchedules() {
-  const container = $("scheduleTableBody");
+async function renderSchedules() {
+  const container = $("scheduleList");
   if (!container) return;
 
-  container.innerHTML = schedules.map(schedule => `
-        <tr>
-            <td>${escapeHTML(schedule.day)}</td>
-            <td>${escapeHTML(schedule.time)}</td>
-            <td>${escapeHTML(schedule.subject)}</td>
-            <td>${escapeHTML(schedule.teacher)}</td>
-        </tr>
+  container.innerHTML = "<p>Memuat jadwal...</p>";
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("schedules")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    schedules = (data || []).map(item => ({
+      id: String(item.id),
+      day: item.hari,
+      subject: item.mata_pelajaran,
+      teacher: item.guru || "Belum diatur",
+      time: item.jam || "-",
+      className: item.kelas || ""
+    }));
+
+    if (!schedules.length) {
+      container.innerHTML = "<p>Belum ada jadwal.</p>";
+      return;
+    }
+
+    container.innerHTML = schedules.map(schedule => `
+      <div class="schedule-card">
+        <h3>${escapeHTML(schedule.day)}</h3>
+        <p>${escapeHTML(schedule.subject)}</p>
+        <p>Guru: ${escapeHTML(schedule.teacher)}</p>
+        <p>Jam: ${escapeHTML(schedule.time)}</p>
+        <p>Kelas: ${escapeHTML(schedule.className)}</p>
+      </div>
     `).join("");
+
+  } catch (error) {
+    console.error("Gagal memuat jadwal:", error);
+    container.innerHTML =
+      `<p>Gagal memuat jadwal: ${escapeHTML(error.message)}</p>`;
+  }
 }
+
+
 
 
 /* =====================================================
