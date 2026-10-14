@@ -1573,7 +1573,6 @@ function openStudentModal() {
   modal.classList.remove("hidden");
 }
 
-
 async function deleteAttendance(id) {
   if (currentUser?.role !== "admin") {
     alert("Hanya admin yang bisa menghapus absensi.");
@@ -1585,22 +1584,32 @@ async function deleteAttendance(id) {
   }
 
   try {
-    const { error } = await supabaseClient
+    const { data, error } = await supabaseClient
       .from("absensi")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .select("id");
 
     if (error) throw error;
+    if (!data || data.length === 0) {
+      alert("Data tidak terhapus. Periksa izin DELETE Supabase.");
+      return;
+    }
 
     attendance = attendance.filter(
       item => String(item.id) !== String(id)
     );
 
     saveAttendance();
-    renderDashboard();
+
+    if (typeof renderDashboard === "function") {
+      renderDashboard();
+    }
+
     renderRecap();
 
     alert("Data absensi berhasil dihapus.");
+
   } catch (error) {
     console.error("Gagal menghapus absensi:", error);
     alert("Gagal menghapus data: " + error.message);
