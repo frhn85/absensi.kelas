@@ -886,7 +886,8 @@ function setupStudentManagement() {
   $("studentCancel")?.addEventListener("click", resetStudentForm);
 }
 
-function renderStudents() {
+
+async function renderStudents() {
   const container = $("studentsTableBody");
   if (!container) return;
 
@@ -894,44 +895,75 @@ function renderStudents() {
     .trim()
     .toLowerCase() || "";
 
-  const filtered = students
-    .filter(student =>
+  container.innerHTML = `
+    <tr>
+      <td colspan="4">Memuat data siswa...</td>
+    </tr>
+  `;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("students")
+      .select("*")
+      .order("nama", { ascending: true });
+
+    if (error) throw error;
+
+    students = (data || []).map(item => ({
+      id: String(item.id),
+      nis: item.nis || "",
+      name: item.nama,
+      className: item.kelas
+    }));
+
+    const filtered = students.filter(student =>
       `${student.nis} ${student.name} ${student.className}`
         .toLowerCase()
         .includes(search)
-    )
-    .sort((a, b) =>
-      a.name.localeCompare(b.name, "id", {
-        sensitivity: "base"
-      })
     );
 
-  container.innerHTML = filtered.map(student => `
+    if (!filtered.length) {
+      container.innerHTML = `
         <tr>
-            <td>${escapeHTML(student.nis || "-")}</td>
-            <td>${escapeHTML(student.name || "-")}</td>
-            <td>${escapeHTML(student.className || "-")}</td>
-            <td class="admin-only">9
-                <button type="button"
-                    onclick="deleteStudent('${escapeHTML(student.id)}')">
-                    Hapus
-                </button>
-            </td>
+          <td colspan="4">Belum ada data siswa.</td>
         </tr>
+      `;
+      renderDashboard();
+      return;
+    }
+
+    container.innerHTML = filtered.map(student => `
+      <tr>
+        <td>${escapeHTML(student.nis || "-")}</td>
+        <td>${escapeHTML(student.name || "-")}</td>
+        <td>${escapeHTML(student.className || "-")}</td>
+        <td class="admin-only">
+          <button type="button"
+            onclick="deleteStudent('${escapeHTML(student.id)}')">
+            Hapus
+          </button>
+        </td>
+      </tr>
     `).join("");
 
-  if (!filtered.length) {
-    container.innerHTML = `
-            <tr>
-                <td colspan="4">Data siswa tidak ditemukan.</td>
-            </tr>
-        `;
-  }
+    setupRoleUI();
+    renderDashboard();
 
-  setupRoleUI();
+  } catch (error) {
+    console.error("Gagal memuat siswa:", error);
+    container.innerHTML = `
+      <tr>
+        <td colspan="4">
+          Gagal memuat data siswa: ${escapeHTML(error.message)}
+        </td>
+      </tr>
+    `;
+  }
 }
 
-function saveStudent(e) {
+
+
+async function saveStudent(e) {
   e.preventDefault();
 
   if (currentUser?.role !== "admin") {
@@ -949,7 +981,8 @@ function saveStudent(e) {
   }
 
   const duplicate = students.find(student =>
-    student.nis === nis && student.id !== editingStudentId
+    student.nis === nis &&
+    String(student.id) !== String(editingStudentId)
   );
 
   if (duplicate) {
@@ -957,29 +990,53 @@ function saveStudent(e) {
     return;
   }
 
-  if (editingStudentId) {
-    students = students.map(student =>
-      student.id === editingStudentId
-        ? { ...student, nis, name, className }
-        : student
+  try {
+    let result;
+
+    if (editingStudentId) {
+      result = await supabaseClient
+        .from("students")
+        .update({
+          nis,
+          nama: name,
+          kelas: className
+        })
+        .eq("id", editingStudentId)
+        .select();
+    } else {
+      result = await supabaseClient
+        .from("students")
+        .insert({
+          nis,
+          nama: name,
+          kelas: className
+        })
+        .select();
+    }
+
+    if (result.error) throw result.error;
+
+    if (!result.data || result.data.length === 0) {
+      throw new Error("Data tidak tersimpan. Periksa izin Supabase.");
+    }
+
+    await renderStudents();
+
+    hide($("studentFormContainer"));
+    hide($("studentModal"));
+    resetStudentForm();
+
+    alert(
+      editingStudentId
+        ? "Data siswa berhasil diperbarui."
+        : "Data siswa berhasil ditambahkan ke Supabase."
     );
-  } else {
-    students.push({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      nis,
-      name,
-      className
-    });
+
+  } catch (error) {
+    console.error("Gagal menyimpan siswa:", error);
+    alert("Gagal menyimpan siswa: " + error.message);
   }
-
-  saveStudents();
-  renderStudents();
-  renderDashboard();
-  hide($("studentFormContainer"));
-  resetStudentForm();
-  alert("Data siswa berhasil disimpan.");
 }
-
 
 function editStudent(id) {
   if (currentUser?.role !== "admin") return;
@@ -996,13 +1053,15 @@ function editStudent(id) {
   show($("studentFormContainer"));
 }
 
-function deleteStudent(id) {
+async function deleteStudent(id) {
   if (currentUser?.role !== "admin") {
     alert("Hanya admin yang bisa menghapus siswa.");
     return;
   }
 
-  const student = students.find(s => String(s.id) === String(id));
+  const student = students.find(
+    s => String(s.id) === String(id)
+  );
 
   if (!student) {
     alert("Data siswa tidak ditemukan.");
@@ -1013,14 +1072,32 @@ function deleteStudent(id) {
     return;
   }
 
-  students = students.filter(s => String(s.id) !== String(id));
+  try {
+    const { data, error } = await supabaseClient
+      .from("students")
+      .delete()
+      .eq("id", id)
+      .select("id");
 
-  saveStudents();
-  renderStudents();
-  renderDashboard();
+    if (error) throw error;
 
-  alert("Data siswa berhasil dihapus.");
+    if (!data || data.length === 0) {
+      throw new Error(
+        "Data tidak terhapus. Periksa izin DELETE di Supabase."
+      );
+    }
+
+    await renderStudents();
+    renderDashboard();
+
+    alert("Data siswa berhasil dihapus dari Supabase.");
+
+  } catch (error) {
+    console.error("Gagal menghapus siswa:", error);
+    alert("Gagal menghapus siswa: " + error.message);
+  }
 }
+
 
 function resetStudentForm() {
   editingStudentId = null;
