@@ -1250,27 +1250,171 @@ function renderRecap() {
 }
 
 
+
 /* =====================================================
    USER MANAGEMENT
 ===================================================== */
 
-function renderUsers() {
-  const container = $("usersTableBody");
-  if (!container) return;
+async function renderUsers() {
+  const container = $("userTableBody");
 
-  if (currentUser?.role !== "admin") {
-    container.innerHTML = "";
+  if (!container) {
+    console.error("Elemen userTableBody tidak ditemukan di HTML.");
     return;
   }
 
-  container.innerHTML = users.map(user => `
+  if (currentUser?.role !== "admin") {
+    container.innerHTML = `
+      <tr>
+        <td colspan="5">Akses hanya untuk admin.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <tr>
+      <td colspan="5">Memuat akun pengguna...</td>
+    </tr>
+  `;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("id, username, role")
+      .order("username", { ascending: true });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      container.innerHTML = `
         <tr>
-            <td>${escapeHTML(user.username)}</td>
-            <td>${escapeHTML(user.name)}</td>
-            <td>${escapeHTML(user.role || "user")}</td>
+          <td colspan="5">Tidak ada akun pengguna.</td>
         </tr>
+      `;
+      return;
+    }
+
+    container.innerHTML = data.map(user => `
+      <tr>
+        <td>${escapeHTML(user.username || "-")}</td>
+        <td>
+          ${user.role === "admin" ? "Administrator" : "Siswa"}
+        </td>
+        <td>
+          <span class="status-active">Terdaftar</span>
+        </td>
+        <td>••••••••</td>
+        <td>
+          ${
+            user.role === "user"
+              ? `
+                <button
+                  type="button"
+                  class="reset-password-btn"
+                  onclick="resetUserPassword(
+                    '${escapeHTML(user.id)}',
+                    '${escapeHTML(user.username)}'
+                  )"
+                >
+                  Reset Password
+                </button>
+              `
+              : "Admin"
+          }
+        </td>
+      </tr>
     `).join("");
+
+  } catch (error) {
+    console.error("Gagal memuat akun:", error);
+
+    container.innerHTML = `
+      <tr>
+        <td colspan="5">
+          Gagal memuat akun: ${escapeHTML(error.message)}
+        </td>
+      </tr>
+    `;
+  }
 }
+
+
+/* =====================================================
+   RESET PASSWORD PENGGUNA
+===================================================== */
+
+async function resetUserPassword(userId, username) {
+  if (currentUser?.role !== "admin") {
+    alert("Hanya admin yang dapat mereset password.");
+    return;
+  }
+
+  if (!confirm(`Reset password untuk akun ${username}?`)) {
+    return;
+  }
+
+  const newPassword = prompt(
+    `Masukkan password baru untuk ${username} (8–72 karakter):`
+  );
+
+  if (newPassword === null) return;
+
+  if (newPassword.length < 8 || newPassword.length > 72) {
+    alert("Password harus terdiri dari 8–72 karakter.");
+    return;
+  }
+
+  const confirmation = prompt("Masukkan ulang password baru:");
+
+  if (confirmation === null) return;
+
+  if (newPassword !== confirmation) {
+    alert("Kedua password tidak cocok.");
+    return;
+  }
+
+  try {
+    const {
+      data: { session },
+      error: sessionError
+    } = await supabaseClient.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    if (!session || session.user.id !== currentUser.id) {
+      throw new Error("Sesi admin tidak valid. Silakan login ulang.");
+    }
+
+    const response = await fetch(
+      `${SUPABASE_URL}/functions/v1/admin-reset-password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
+          "apikey": SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          new_password: newPassword
+        })
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Reset password gagal.");
+    }
+
+    alert(`Password akun ${username} berhasil diperbarui.`);
+  } catch (error) {
+    console.error("Reset password gagal:", error);
+    alert("Gagal reset password: " + error.message);
+  }
+}
+
 
 /* =====================================================
    PROFILE
