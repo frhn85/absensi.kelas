@@ -2878,3 +2878,297 @@ tbody tr {
         transition-duration: 0.01ms !important;
     }
 }
+
+
+/* Warna status pada Rekap Absensi */
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-hadir {
+    color: #166534;
+    background: #DCFCE7;
+}
+
+.status-izin {
+    color: #1D4ED8;
+    background: #DBEAFE;
+}
+
+.status-sakit {
+    color: #92400E;
+    background: #FEF3C7;
+}
+
+.status-alpa {
+    color: #991B1B;
+    background: #FEE2E2;
+}
+
+.status-bolos {
+    color: #6B21A8;
+    background: #F3E8FF;
+}
+
+/* DETAIL REKAP DI HP */
+.recap-detail-heading,
+.recap-detail-cell {
+    display: none;
+}
+
+.recap-mobile-detail-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--card2);
+    color: var(--primary2);
+    cursor: pointer;
+}
+
+.recap-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.recap-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.recap-detail-row span {
+    color: var(--muted);
+}
+
+.recap-detail-row strong {
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.recap-detail-action {
+    align-items: center;
+}
+
+/* PERBAIKAN REKAP MOBILE */
+@media (max-width: 700px) {
+  #page-rekap .recap-student-table {
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+
+  #page-rekap .recap-student-table th,
+  #page-rekap .recap-student-table td {
+    box-sizing: border-box;
+    padding: 10px 5px !important;
+    vertical-align: middle !important;
+    font-size: 12px !important;
+  }
+
+  /* Sembunyikan Kelas, Tanggal, Jam, dan Aksi */
+  #page-rekap .recap-student-table th:nth-child(2),
+  #page-rekap .recap-student-table td:nth-child(2),
+  #page-rekap .recap-student-table th:nth-child(3),
+  #page-rekap .recap-student-table td:nth-child(3),
+  #page-rekap .recap-student-table th:nth-child(5),
+  #page-rekap .recap-student-table td:nth-child(5),
+  #page-rekap .recap-student-table th:nth-child(6),
+  #page-rekap .recap-student-table td:nth-child(6),
+  #page-rekap .recap-student-table th:nth-child(7),
+  #page-rekap .recap-student-table td:nth-child(7) {
+    display: none !important;
+  }
+
+  /* Nama */
+  #page-rekap .recap-student-table th:nth-child(1),
+  #page-rekap .recap-student-table td:nth-child(1) {
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Status */
+  #page-rekap .recap-student-table th:nth-child(4),
+  #page-rekap .recap-student-table td:nth-child(4) {
+    width: 30%;
+    white-space: nowrap;
+  }
+
+  /* Ikon detail tepat setelah Status */
+  #page-rekap .recap-student-table .recap-detail-heading {
+    display: none !important;
+  }
+
+  #page-rekap .recap-student-table .recap-detail-cell {
+    display: table-cell !important;
+    width: 20%;
+    text-align: center;
+  }
+
+  #page-rekap .recap-mobile-detail-btn {
+    display: inline-flex !important;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #page-rekap .status-badge {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+}
+
+/* =====================================================
+   WARNA PILIHAN STATUS ABSENSI
+===================================================== */
+.attendance-status-options {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.attendance-status-options > label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid rgba(148, 163, 184, .22);
+    border-radius: 12px;
+    background: rgba(148, 163, 184, .07);
+    color: var(--text, #e5e7eb);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.attendance-status-options > label:hover {
+    transform: translateY(-1px);
+}
+
+.attendance-status-options input[type="radio"] {
+    accent-color: currentColor;
+    margin: 0;
+}
+
+/* Hadir: hijau */
+.attendance-status-options > label:nth-child(1) { --status-color: #22c55e; --status-bg: rgba(34,197,94,.13); }
+/* Izin: biru */
+.attendance-status-options > label:nth-child(2) { --status-color: #60a5fa; --status-bg: rgba(59,130,246,.14); }
+/* Sakit: kuning/oranye */
+.attendance-status-options > label:nth-child(3) { --status-color: #fbbf24; --status-bg: rgba(245,158,11,.14); }
+/* Alpa: merah */
+.attendance-status-options > label:nth-child(4) { --status-color: #f87171; --status-bg: rgba(239,68,68,.14); }
+/* Bolos: ungu */
+.attendance-status-options > label:nth-child(5) { --status-color: #c084fc; --status-bg: rgba(168,85,247,.15); }
+
+.attendance-status-options > label:has(input:checked) {
+    color: var(--status-color);
+    background: var(--status-bg);
+    border-color: var(--status-color);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--status-color) 17%, transparent);
+}
+
+/* Warna badge status, termasuk di tabel dan rekap */
+.status-hadir { color: #4ade80 !important; background: rgba(34,197,94,.14) !important; border: 1px solid rgba(34,197,94,.28); }
+.status-izin { color: #60a5fa !important; background: rgba(59,130,246,.14) !important; border: 1px solid rgba(59,130,246,.28); }
+.status-sakit { color: #fbbf24 !important; background: rgba(245,158,11,.14) !important; border: 1px solid rgba(245,158,11,.28); }
+.status-alpa { color: #f87171 !important; background: rgba(239,68,68,.14) !important; border: 1px solid rgba(239,68,68,.28); }
+.status-bolos { color: #c084fc !important; background: rgba(168,85,247,.15) !important; border: 1px solid rgba(168,85,247,.3); }
+
+@media (max-width: 600px) {
+    .attendance-status-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .attendance-status-options > label:last-child { grid-column: 1 / -1; }
+}
+
+
+/* Badge status berwarna pada tabel Rekap Absensi */
+#page-rekap .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 66px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.35;
+    font-weight: 700;
+    white-space: nowrap;
+}
+#page-rekap .status-unknown {
+    color: #cbd5e1;
+    background: rgba(148,163,184,.12);
+    border: 1px solid rgba(148,163,184,.25);
+}
+
+
+/* =====================================================
+   LIGHT MODE
+===================================================== */
+body.light-mode {
+  --bg:#f3f6fc;
+  --card:#ffffff;
+  --card2:#edf2fa;
+  --border:#dbe3ef;
+  --text:#172033;
+  --muted:#64748b;
+  --primary:#286eff;
+  --primary2:#5c8dff;
+  background:var(--bg)!important;
+  color:var(--text)!important;
+}
+body.light-mode:before { opacity:.18; }
+body.light-mode .sidebar,
+body.light-mode .topbar,
+body.light-mode .card,
+body.light-mode .dashboard-card,
+body.light-mode .settings-card,
+body.light-mode .setting-item,
+body.light-mode .table-container,
+body.light-mode .modal-box,
+body.light-mode .profile-card,
+body.light-mode .recap-card,
+body.light-mode .stat-card,
+body.light-mode .content-card {
+  background:#fff!important;
+  color:#172033!important;
+  border-color:#dbe3ef!important;
+}
+body.light-mode .main-content,
+body.light-mode .page,
+body.light-mode .app-container { background:#f3f6fc!important; color:#172033!important; }
+body.light-mode h1, body.light-mode h2, body.light-mode h3,
+body.light-mode strong, body.light-mode label,
+body.light-mode .nav-item, body.light-mode .setting-item strong,
+body.light-mode td, body.light-mode th { color:#172033; }
+body.light-mode p, body.light-mode span, body.light-mode small,
+body.light-mode .muted, body.light-mode .nav-title { color:#64748b; }
+body.light-mode .nav-item:hover,
+body.light-mode .nav-item.active { background:#e8efff!important;color:#245bd4!important;border-color:#cbd9ff!important; }
+body.light-mode input, body.light-mode select, body.light-mode textarea,
+body.light-mode .search-box input {
+  background:#fff!important;color:#172033!important;border-color:#cbd5e1!important;
+}
+body.light-mode .secondary-btn { background:#edf2fa!important;color:#243047!important;border-color:#d5deeb!important; }
+body.light-mode table { color:#172033; }
+body.light-mode th { background:#edf2fa!important; }
+body.light-mode td { border-color:#e2e8f0!important; }
+body.light-mode .modal { background:rgba(15,23,42,.45)!important; }

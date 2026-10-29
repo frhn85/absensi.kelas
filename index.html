@@ -131,18 +131,7 @@
                     <i class="fa-solid fa-users"></i>
                     <span>Data Siswa</span>
                 </button>
-
-                <button class="nav-item" data-page="jadwal">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <span>Jadwal</span>
-                </button>
-
-                <button class="nav-item" data-page="kalender">
-                    <i class="fa-solid fa-calendar"></i>
-                    <span>Kalender</span>
-                </button>
-
-                <button class="nav-item" data-page="rekap">
+<button class="nav-item" data-page="rekap">
                     <i class="fa-solid fa-chart-column"></i>
                     <span>Rekap</span>
                 </button>
@@ -352,30 +341,30 @@
                         <!-- STATUS -->
                         <div class="form-section">
                             <label>Status Kehadiran</label>
-
-                            <div class="attendance-options">
-                                <label class="attendance-option">
-                                    <input type="radio" name="attendanceStatus" value="Hadir" required />
-                                    <div>
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        <span>Hadir</span>
-                                    </div>
+                            <div class="attendance-status-options">
+                                <label>
+                                    <input type="radio" name="attendanceStatus" value="Hadir">
+                                    Hadir
                                 </label>
 
-                                <label class="attendance-option">
-                                    <input type="radio" name="attendanceStatus" value="Izin" />
-                                    <div>
-                                        <i class="fa-solid fa-file-circle-check"></i>
-                                        <span>Izin</span>
-                                    </div>
+                                <label>
+                                    <input type="radio" name="attendanceStatus" value="Izin">
+                                    Izin
                                 </label>
 
-                                <label class="attendance-option">
-                                    <input type="radio" name="attendanceStatus" value="Sakit" />
-                                    <div>
-                                        <i class="fa-solid fa-bed"></i>
-                                        <span>Sakit</span>
-                                    </div>
+                                <label>
+                                    <input type="radio" name="attendanceStatus" value="Sakit">
+                                    Sakit
+                                </label>
+
+                                <label>
+                                    <input type="radio" name="attendanceStatus" value="Alpa">
+                                    Alpa
+                                </label>
+
+                                <label>
+                                    <input type="radio" name="attendanceStatus" value="Bolos">
+                                    Bolos
                                 </label>
                             </div>
                         </div>
@@ -462,54 +451,7 @@
                     </div>
                 </div>
             </section>
-
-            <!-- =================================================
-             JADWAL
-        ================================================= -->
-
-            <section class="page" id="page-jadwal">
-                <div class="page-heading">
-                    <div>
-                        <h2>Jadwal</h2>
-
-                        <p>Jadwal pelajaran.</p>
-                    </div>
-                </div>
-
-                <div class="schedule-grid" id="scheduleList"></div>
-            </section>
-
-            <!-- =================================================
-             KALENDER
-        ================================================= -->
-
-            <section class="page" id="page-kalender">
-                <div class="page-heading">
-                    <div>
-                        <h2>Kalender</h2>
-
-                        <p>Kalender sekolah.</p>
-                    </div>
-                </div>
-
-                <div class="calendar-card">
-                    <div class="calendar-header">
-                        <button onclick="changeMonth(-1)">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-
-                        <h3 id="calendarTitle">-</h3>
-
-                        <button onclick="changeMonth(1)">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-
-                    <div class="calendar-grid" id="calendarGrid"></div>
-                </div>
-            </section>
-
-            <!-- =================================================
+<!-- =================================================
              REKAP
         ================================================= -->
 
@@ -550,6 +492,7 @@
                                     <th>Kelas</th>
                                     <th>Tanggal</th>
                                     <th>Status</th>
+                                    <th class="recap-detail-heading">Detail</th>
                                     <th>Jam</th>
                                     <th class="admin-only">Aksi</th>
                                 </tr>
@@ -601,15 +544,14 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>No</th>
-
                                     <th>Username</th>
-
-                                    <th>Nama</th>
-
                                     <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Password</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
+                            <tbody id="userTableBody"></tbody>
 
                             <tbody id="userTableBody"></tbody>
                         </table>
@@ -735,7 +677,7 @@
                         <div>
                             <strong> Export Data </strong>
 
-                            <span> Simpan data aplikasi. </span>
+                            <span> Ekspor data rekap absensi saja. </span>
                         </div>
 
                         <button class="secondary-btn" onclick="exportData()">

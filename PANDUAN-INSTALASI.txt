@@ -1,0 +1,28 @@
+ABSENSI DIGITAL PPLG - PAKET PEMBARUAN
+
+FILE:
+- index.html
+- script.js
+- style.css
+- supabase_absensi.sql
+
+PEMASANGAN:
+1. Backup folder project dan database Supabase.
+2. Ganti file index.html, script.js, dan style.css dengan file dari paket.
+3. Buka Supabase > SQL Editor dan jalankan supabase_absensi.sql.
+4. Buat akun siswa/admin melalui Authentication > Users.
+5. Salin UUID setiap akun, lalu buat baris di public.profiles:
+   id = UUID Auth, username = username login, role = 'user' atau 'admin'.
+6. Login siswa memakai username (bukan email) dan password. Aplikasi membentuk email
+   username@absensi-kelas.test. Login admin memakai email Auth yang terdaftar.
+7. Isi tabel students dan schedules dari akun admin.
+
+CATATAN:
+- Password default siswa/admin yang ada di JavaScript lama tidak lagi dipakai untuk autentikasi.
+- Jangan jalankan SQL pada database produksi tanpa backup.
+- Fitur reset password dari panel admin memerlukan Supabase Edge Function bernama
+  admin-reset-password. Fungsi itu harus memakai service-role key di server saja,
+  memverifikasi bahwa pemanggil adalah admin, dan tidak boleh meletakkan key tersebut
+  di script.js.
+- Pemeriksaan yang dilakukan di sini bersifat statis (sintaks dan kecocokan kode),
+  bukan uji login langsung ke project Supabase.
