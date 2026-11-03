@@ -721,21 +721,19 @@ function setupLogin() {
 
 
 function showAdminLogin() {
-
   hide($("userLogin"));
-
   show($("adminLogin"));
-
+  $("studentTab")?.classList.remove("active");
+  $("adminTab")?.classList.add("active");
 }
 
 
 
 function showUserLogin() {
-
   hide($("adminLogin"));
-
   show($("userLogin"));
-
+  $("adminTab")?.classList.remove("active");
+  $("studentTab")?.classList.add("active");
 }
 
 

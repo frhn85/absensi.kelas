@@ -18,80 +18,86 @@
 ===================================================== -->
 
     <div id="authPage" class="auth-page">
-        <div class="auth-box">
-            <div class="auth-logo">
-                <i class="fa-solid fa-school"></i>
-            </div>
+        <div class="auth-layout">
+            <section class="auth-visual" aria-label="Informasi sistem absensi">
+                <div class="auth-visual-content">
+                    <div class="auth-brand">
+                        <span class="auth-brand-icon"><i class="fa-solid fa-school"></i></span>
+                        <strong>X - PPLG 1</strong>
+                    </div>
 
-            <h1>Absensi Digital</h1>
+                    <div class="auth-copy">
+                        <h2>Sistem<br>Absensi<br><span>Digital</span></h2>
+                        <p>Sistem digital untuk pencatatan dan pemantauan kehadiran siswa.</p>
+                    </div>
 
-            <p class="auth-subtitle">Sistem absensi siswa</p>
-
-            <!-- LOGIN USER -->
-
-            <div id="userLogin">
-                <div class="login-title">
-                    <i class="fa-solid fa-user"></i>
-                    Login User
+                    <div class="auth-feature-list">
+                        <span><i class="fa-solid fa-code"></i> Modern</span>
+                        <span><i class="fa-solid fa-shield-halved"></i> Aman</span>
+                    </div>
                 </div>
+            </section>
 
-                <form id="loginForm">
-                    <div class="input-group">
-                        <i class="fa-solid fa-user"></i>
+            <section class="auth-panel">
+                <div class="auth-panel-inner">
+                    <h1>Selamat Datang Kembali</h1>
+                    <p class="auth-subtitle">Silakan masuk ke akun Anda</p>
 
-                        <input type="text" id="loginUsername" placeholder="Username" required />
+                    <div class="auth-tabs" role="tablist" aria-label="Jenis akun">
+                        <button class="auth-tab active" id="studentTab" type="button" onclick="showUserLogin()">
+                            <i class="fa-solid fa-user"></i> Siswa
+                        </button>
+                        <button class="auth-tab" id="adminTab" type="button" onclick="showAdminLogin()">
+                            <i class="fa-solid fa-shield-halved"></i> Admin
+                        </button>
                     </div>
 
-                    <div class="input-group">
-                        <i class="fa-solid fa-lock"></i>
+                    <div id="userLogin">
+                        <form id="loginForm">
+                            <label class="auth-field-label" for="loginUsername">Username</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="loginUsername" placeholder="Masukkan Username"
+                                    autocomplete="username" required />
+                            </div>
 
-                        <input type="password" id="loginPassword" placeholder="Password" required />
+                            <label class="auth-field-label" for="loginPassword">Password</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="loginPassword" placeholder="Masukkan Password"
+                                    autocomplete="current-password" required />
+                                <i class="fa-regular fa-eye-slash password-visibility-icon" aria-hidden="true"></i>
+                            </div>
+
+                            <button type="submit" class="primary-btn auth-submit">
+                                <i class="fa-solid fa-right-to-bracket"></i> Masuk Sekarang
+                            </button>
+                        </form>
                     </div>
 
-                    <button type="submit" class="primary-btn">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        Login User
-                    </button>
-                </form>
+                    <div id="adminLogin" class="hidden">
+                        <form id="adminLoginForm">
+                            <label class="auth-field-label" for="adminUsername">Email Admin</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-user-shield"></i>
+                                <input type="text" id="adminUsername" placeholder="Masukkan Email Admin"
+                                    autocomplete="username" required />
+                            </div>
 
-                <button class="admin-login-btn" onclick="showAdminLogin()">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Login sebagai Admin
-                </button>
-            </div>
+                            <label class="auth-field-label" for="adminPassword">Password</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="adminPassword" placeholder="Masukkan Password"
+                                    autocomplete="current-password" required />
+                            </div>
 
-            <!-- LOGIN ADMIN -->
-
-            <div id="adminLogin" class="hidden">
-                <div class="login-title admin-title">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Login Admin
+                            <button type="submit" class="primary-btn auth-submit">
+                                <i class="fa-solid fa-right-to-bracket"></i> Masuk Sekarang
+                            </button>
+                        </form>
+                    </div>
                 </div>
-
-                <form id="adminLoginForm">
-                    <div class="input-group">
-                        <i class="fa-solid fa-user-shield"></i>
-
-                        <input type="text" id="adminUsername" placeholder="Username Admin" required />
-                    </div>
-
-                    <div class="input-group">
-                        <i class="fa-solid fa-lock"></i>
-
-                        <input type="password" id="adminPassword" placeholder="Password Admin" required />
-                    </div>
-
-                    <button type="submit" class="primary-btn">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        Login Admin
-                    </button>
-                </form>
-
-                <button class="back-login-btn" onclick="showUserLogin()">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Kembali ke Login User
-                </button>
-            </div>
+            </section>
         </div>
     </div>
 
@@ -131,7 +137,7 @@
                     <i class="fa-solid fa-users"></i>
                     <span>Data Siswa</span>
                 </button>
-<button class="nav-item" data-page="rekap">
+                <button class="nav-item" data-page="rekap">
                     <i class="fa-solid fa-chart-column"></i>
                     <span>Rekap</span>
                 </button>
@@ -451,7 +457,7 @@
                     </div>
                 </div>
             </section>
-<!-- =================================================
+            <!-- =================================================
              REKAP
         ================================================= -->
 
