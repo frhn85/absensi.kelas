@@ -3503,3 +3503,151 @@ body.light-mode .modal { background:rgba(15,23,42,.45)!important; }
         white-space: nowrap;
     }
 }
+
+/* FIX REKAP HP: KEMBALIKAN TABEL SEPERTI LAPTOP */
+@media (max-width: 700px) {
+    #page-rekap .recap-card {
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    #page-rekap .recap-table-wrapper {
+        display: block !important;
+        width: 100%;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #page-rekap .recap-student-table {
+        display: table !important;
+        width: 100%;
+        min-width: 900px;
+        table-layout: auto;
+        white-space: nowrap;
+    }
+
+    #page-rekap .recap-student-table thead {
+        display: table-header-group !important;
+    }
+
+    #page-rekap .recap-student-table tbody {
+        display: table-row-group !important;
+    }
+
+    #page-rekap .recap-student-table tr {
+        display: table-row !important;
+    }
+
+    #page-rekap .recap-student-table th,
+    #page-rekap .recap-student-table td {
+        display: table-cell !important;
+        white-space: nowrap !important;
+        padding: 12px;
+        vertical-align: middle;
+    }
+
+    #page-rekap .recap-student-table td::before {
+        content: none !important;
+        display: none !important;
+    }
+}
+
+/* PAKSA TAMPILKAN SEMUA KOLOM REKAP */
+@media (max-width: 700px) {
+  #page-rekap .recap-table-wrapper {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #page-rekap .recap-student-table {
+    display: table !important;
+    width: 900px !important;
+    min-width: 900px !important;
+    table-layout: auto !important;
+    white-space: nowrap !important;
+  }
+
+  #page-rekap .recap-student-table thead {
+    display: table-header-group !important;
+  }
+
+  #page-rekap .recap-student-table tbody {
+    display: table-row-group !important;
+  }
+
+  #page-rekap .recap-student-table tr {
+    display: table-row !important;
+  }
+
+  #page-rekap .recap-student-table th,
+  #page-rekap .recap-student-table td {
+    display: table-cell !important;
+    white-space: nowrap !important;
+    padding: 12px !important;
+    transform: none !important;
+  }
+
+  #page-rekap .recap-student-table th:nth-child(1),
+  #page-rekap .recap-student-table td:nth-child(1),
+  #page-rekap .recap-student-table th:nth-child(2),
+  #page-rekap .recap-student-table td:nth-child(2),
+  #page-rekap .recap-student-table th:nth-child(3),
+  #page-rekap .recap-student-table td:nth-child(3),
+  #page-rekap .recap-student-table th:nth-child(4),
+  #page-rekap .recap-student-table td:nth-child(4),
+  #page-rekap .recap-student-table th:nth-child(5),
+  #page-rekap .recap-student-table td:nth-child(5),
+  #page-rekap .recap-student-table th:nth-child(6),
+  #page-rekap .recap-student-table td:nth-child(6) {
+    display: table-cell !important;
+  }
+
+  #page-rekap .recap-student-table td::before {
+    display: none !important;
+    content: none !important;
+  }
+}
+
+/* RAPATKAN KOLOM REKAP */
+@media (max-width: 700px) {
+  #page-rekap .recap-student-table {
+    width: 560px !important;
+    min-width: 560px !important;
+    table-layout: fixed !important;
+  }
+
+  #page-rekap .recap-student-table th:nth-child(1),
+  #page-rekap .recap-student-table td:nth-child(1) {
+    width: 115px !important;
+  }
+
+  #page-rekap .recap-student-table th:nth-child(2),
+  #page-rekap .recap-student-table td:nth-child(2) {
+    width: 85px !important;
+  }
+
+  #page-rekap .recap-student-table th:nth-child(3),
+  #page-rekap .recap-student-table td:nth-child(3) {
+    width: 95px !important;
+  }
+
+  #page-rekap .recap-student-table th:nth-child(4),
+  #page-rekap .recap-student-table td:nth-child(4) {
+    width: 90px !important;
+  }
+
+  #page-rekap .recap-student-table th:nth-child(5),
+  #page-rekap .recap-student-table td:nth-child(5) {
+    width: 75px !important;
+  }
+
+  #page-rekap .recap-student-table th:nth-child(6),
+  #page-rekap .recap-student-table td:nth-child(6) {
+    width: 70px !important;
+  }
+}
