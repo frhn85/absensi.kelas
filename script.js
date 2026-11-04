@@ -1,101 +1,71 @@
-
-
 /* KONEKSI SUPABASE */
 
 const SUPABASE_URL = "https://qhvzzhpdpixbfanisyuk.supabase.co";
 
 const SUPABASE_KEY = "sb_publishable_lwAxMjPMtEMY3CXtnrPZDQ_5yigxtwY";
 
-
-
 const supabaseClient = window.supabase.createClient(
-
   SUPABASE_URL,
 
-  SUPABASE_KEY
-
+  SUPABASE_KEY,
 );
 
-
-
 const DEFAULT_USERS = Array.from({ length: 36 }, (_, i) => ({
-
   username: `siswa${i + 1}`,
 
   password: "12345",
 
   name: `Siswa ${i + 1}`,
 
-  role: "user"
-
+  role: "user",
 }));
 
-
-
 const DEFAULT_ADMINS = [
-
   {
-
     username: "adminpplg1",
 
     password: "loginadmin",
 
     name: "Admin PPLG 1",
 
-    role: "admin"
-
-  }
-
+    role: "admin",
+  },
 ];
 
-
-
 const DEFAULT_STUDENTS = [
-
   {
-
     id: "yc8f1x",
 
     nis: "1001",
 
     name: "Andi Pratama",
 
-    className: "X PPLG 1"
-
+    className: "X PPLG 1",
   },
 
   {
-
     id: "b7k2m9",
 
     nis: "1002",
 
     name: "Budi Setiawan",
 
-    className: "X PPLG 1"
-
+    className: "X PPLG 1",
   },
 
   {
-
     id: "p4x8q2",
 
     nis: "1003",
 
     name: "Citra Lestari",
 
-    className: "X PPLG 2"
-
-  }
-
+    className: "X PPLG 2",
+  },
 ];
 
-
-
 const DEFAULT_SCHEDULES = [
-
   {
-
     id: "s1",
 
     day: "Senin",
@@ -104,12 +74,10 @@ const DEFAULT_SCHEDULES = [
 
     teacher: "Guru Informatika",
 
-    time: "07:00 - 08:30"
-
+    time: "07:00 - 08:30",
   },
 
   {
-
     id: "s2",
 
     day: "Selasa",
@@ -118,12 +86,10 @@ const DEFAULT_SCHEDULES = [
 
     teacher: "Guru Bahasa Indonesia",
 
-    time: "07:00 - 08:30"
-
+    time: "07:00 - 08:30",
   },
 
   {
-
     id: "s3",
 
     day: "Rabu",
@@ -132,12 +98,10 @@ const DEFAULT_SCHEDULES = [
 
     teacher: "Guru PPLG",
 
-    time: "07:00 - 09:30"
-
+    time: "07:00 - 09:30",
   },
 
   {
-
     id: "s4",
 
     day: "Kamis",
@@ -146,12 +110,10 @@ const DEFAULT_SCHEDULES = [
 
     teacher: "Guru Matematika",
 
-    time: "07:00 - 08:30"
-
+    time: "07:00 - 08:30",
   },
 
   {
-
     id: "s5",
 
     day: "Jumat",
@@ -160,13 +122,9 @@ const DEFAULT_SCHEDULES = [
 
     teacher: "Guru PPKn",
 
-    time: "07:00 - 08:30"
-
-  }
-
+    time: "07:00 - 08:30",
+  },
 ];
-
-
 
 // Akun dan password dikelola oleh Supabase Auth, bukan localStorage.
 let users = [];
@@ -174,13 +132,12 @@ let admins = [];
 
 let students = JSON.parse(localStorage.getItem("students")) || [];
 
-let schedules = JSON.parse(localStorage.getItem("schedules")) || DEFAULT_SCHEDULES;
+let schedules =
+  JSON.parse(localStorage.getItem("schedules")) || DEFAULT_SCHEDULES;
 
 let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
 
 let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
-
-
 
 let cameraStream = null;
 
@@ -192,132 +149,68 @@ let editingStudentId = null;
 
 let calendarDate = new Date();
 
-
-
 function $(id) {
-
   return document.getElementById(id);
-
 }
-
-
 
 function show(el) {
-
   if (el) el.classList.remove("hidden");
-
 }
-
-
 
 function hide(el) {
-
   if (el) el.classList.add("hidden");
-
 }
-
-
 
 function saveUsers() {
-
   localStorage.setItem("users", JSON.stringify(users));
-
 }
-
-
 
 function saveAdmins() {
-
   localStorage.setItem("admins", JSON.stringify(admins));
-
 }
-
-
 
 function saveStudents() {
-
   localStorage.setItem("students", JSON.stringify(students));
-
 }
-
-
 
 function saveSchedules() {
-
   localStorage.setItem("schedules", JSON.stringify(schedules));
-
 }
-
-
 
 function saveAttendance() {
-
   localStorage.setItem("attendance", JSON.stringify(attendance));
-
 }
-
-
 
 const ATTENDANCE_TTL_MS = 20 * 60 * 60 * 1000;
 
-
-
 function purgeExpiredAttendance() {
-
   const now = Date.now();
 
   const oldLength = attendance.length;
 
-
-
-  attendance = attendance.filter(item => {
-
-    const createdAt = Date.parse(
-
-      item.timestamp || item.createdAt || ""
-
-    );
-
-
+  attendance = attendance.filter((item) => {
+    const createdAt = Date.parse(item.timestamp || item.createdAt || "");
 
     if (!Number.isFinite(createdAt)) return true;
 
-
-
     return now - createdAt < ATTENDANCE_TTL_MS;
-
   });
 
-
-
   if (attendance.length !== oldLength) {
-
     saveAttendance();
 
     return true;
-
   }
 
-
-
   return false;
-
 }
-
-
 
 function saveCurrentUser() {
-
   localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
 }
 
-
-
 function escapeHTML(value) {
-
   return String(value ?? "")
-
     .replace(/&/g, "&amp;")
 
     .replace(/</g, "&lt;")
@@ -327,55 +220,33 @@ function escapeHTML(value) {
     .replace(/"/g, "&quot;")
 
     .replace(/'/g, "&#039;");
-
 }
-
-
 
 function getInitial(name = "") {
-
   return name.trim().charAt(0).toUpperCase() || "U";
-
 }
 
-
-
 function formatDate(date) {
-
   return new Intl.DateTimeFormat("id-ID", {
-
     day: "2-digit",
 
     month: "long",
 
-    year: "numeric"
-
+    year: "numeric",
   }).format(date);
-
 }
-
-
 
 function formatTime(date) {
-
   return new Intl.DateTimeFormat("id-ID", {
-
     hour: "2-digit",
 
-    minute: "2-digit"
-
+    minute: "2-digit",
   }).format(date);
-
 }
-
-
 
 /* INIT */
 
-
-
 document.addEventListener("DOMContentLoaded", async () => {
-
   setupLogin();
 
   setupNavigation();
@@ -392,47 +263,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setupSettings();
 
-
   setupModals();
 
   setupSchoolLocation();
 
-
-
   try {
-
     const { data, error } = await supabaseClient.auth.getSession();
 
-
-
     if (error) {
-
       console.error("Detail error hapus:", error);
 
-      alert(
-
-        "Gagal menghapus: " +
-
-        error.message +
-
-        "\nKode: " +
-
-        error.code
-
-      );
+      alert("Gagal menghapus: " + error.message + "\nKode: " + error.code);
 
       return;
-
     }
-
-
 
     const session = data.session;
 
-
-
     if (!session) {
-
       currentUser = null;
 
       localStorage.removeItem("currentUser");
@@ -440,49 +288,42 @@ document.addEventListener("DOMContentLoaded", async () => {
       showLoginPage();
 
       return;
-
     }
 
+    const { data: profile, error: profileError } = await supabaseClient
 
+      .from("profiles")
 
-    const { data: profile, error: profileError } =
+      .select("id, username, role")
 
-      await supabaseClient
+      .eq("id", session.user.id)
 
-        .from("profiles")
-
-        .select("id, username, role")
-
-        .eq("id", session.user.id)
-
-        .single();
-
-
+      .single();
 
     if (profileError) throw profileError;
 
+    // Jika QR admin dibuka oleh akun siswa, keluarkan sesi siswa
+    if (isAdminEntry() && profile.role !== "admin") {
+      await supabaseClient.auth.signOut();
 
+      currentUser = null;
+      localStorage.removeItem("currentUser");
+
+      showLoginPage();
+      return;
+    }
 
     currentUser = {
-
       id: session.user.id,
-
       username: profile.username,
-
       name: profile.role === "admin" ? "Admin PPLG 1" : profile.username,
-
-      role: profile.role
-
+      role: profile.role,
     };
-
-
 
     saveCurrentUser();
 
     openApp();
-
   } catch (error) {
-
     console.error("Pemulihan sesi gagal:", error.message);
 
     currentUser = null;
@@ -491,234 +332,143 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.removeItem("attendance");
 
     showLoginPage();
-
   }
-
 });
-
-
-
-
 
 /* LOGIN */
 
-
-
 function setupLogin() {
-
-  $("loginForm")?.addEventListener("submit", async e => {
-
+  $("loginForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-
+    if (isAdminEntry()) {
+      alert("QR ini khusus untuk login admin.");
+      return;
+    }
 
     const username = $("loginUsername")?.value.trim() || "";
 
     const password = $("loginPassword")?.value || "";
 
-
-
     if (!username || !password) {
-
       alert("Masukkan username dan password.");
 
       return;
-
     }
-
-
 
     const email = `${username}@absensi-kelas.test`;
 
-
-
     try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
 
-      const { data, error } =
-
-        await supabaseClient.auth.signInWithPassword({
-
-          email,
-
-          password
-
-        });
-
-
+        password,
+      });
 
       if (error) throw error;
 
+      const { data: profile, error: profileError } = await supabaseClient
 
+        .from("profiles")
 
-      const { data: profile, error: profileError } =
+        .select("id, username, role")
 
-        await supabaseClient
+        .eq("id", data.user.id)
 
-          .from("profiles")
-
-          .select("id, username, role")
-
-          .eq("id", data.user.id)
-
-          .single();
-
-
+        .single();
 
       if (profileError) throw profileError;
 
-
-
       if (profile.role !== "user") {
-
         await supabaseClient.auth.signOut();
 
         alert("Akun ini bukan akun siswa.");
 
         return;
-
       }
 
-
-
       currentUser = {
-
         id: data.user.id,
 
         username: profile.username,
 
         name: profile.username,
 
-        role: "user"
-
+        role: "user",
       };
-
-
 
       saveCurrentUser();
 
       openApp();
-
-
-
     } catch (error) {
-
       console.error("Login siswa gagal:", error.message);
 
-      alert(
-
-        "Login gagal. Periksa username, password, dan profil siswa."
-
-      );
-
+      alert("Login gagal. Periksa username, password, dan profil siswa.");
     }
-
   });
 
-
-
-  $("adminLoginForm")?.addEventListener("submit", async e => {
-
+  $("adminLoginForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
-
-
 
     const email = $("adminUsername")?.value.trim() || "";
 
     const password = $("adminPassword")?.value || "";
 
-
-
     if (!email || !password) {
-
       alert("Masukkan email dan password Supabase.");
 
       return;
-
     }
 
-
-
     try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
 
-      const { data, error } =
-
-        await supabaseClient.auth.signInWithPassword({
-
-          email,
-
-          password
-
-        });
-
-
+        password,
+      });
 
       if (error) throw error;
 
+      const { data: profile, error: profileError } = await supabaseClient
 
+        .from("profiles")
 
-      const { data: profile, error: profileError } =
+        .select("id, username, role")
 
-        await supabaseClient
+        .eq("id", data.user.id)
 
-          .from("profiles")
-
-          .select("id, username, role")
-
-          .eq("id", data.user.id)
-
-          .single();
-
-
+        .single();
 
       if (profileError) throw profileError;
 
-
-
       if (profile.role !== "admin") {
-
         await supabaseClient.auth.signOut();
 
         alert("Akun ini bukan admin.");
 
         return;
-
       }
 
-
-
       currentUser = {
-
         id: data.user.id,
 
         username: profile.username,
 
         name: "Admin PPLG 1",
 
-        role: "admin"
-
+        role: "admin",
       };
-
-
 
       saveCurrentUser();
 
       openApp();
-
-
-
     } catch (error) {
-
       console.error("Login admin gagal:", error.message);
 
       alert("Login gagal. Periksa email, password, dan profil admin.");
-
     }
-
   });
-
 }
-
-
 
 function showAdminLogin() {
   hide($("userLogin"));
@@ -727,8 +477,6 @@ function showAdminLogin() {
   $("adminTab")?.classList.add("active");
 }
 
-
-
 function showUserLogin() {
   hide($("adminLogin"));
   show($("userLogin"));
@@ -736,31 +484,23 @@ function showUserLogin() {
   $("studentTab")?.classList.add("active");
 }
 
-
-
 function showLoginPage() {
-
   hide($("app"));
-
   show($("authPage"));
 
-  showUserLogin();
-
+  if (isAdminEntry()) {
+    showAdminLogin();
+  } else {
+    showUserLogin();
+  }
 }
-
-
 
 /* APP */
 
-
-
 function openApp() {
-
   hide($("authPage"));
 
   show($("app"));
-
-
 
   updateUserUI();
 
@@ -768,12 +508,9 @@ function openApp() {
 
   setAttendanceDefaults();
 
-
-
   renderDashboard();
 
   renderStudents();
-
 
   renderCalendar();
 
@@ -783,102 +520,62 @@ function openApp() {
 
   renderSchoolLocation();
 
-
-
   goToPage("dashboard");
-
-
 
   // Muat rekap dari Supabase
 
   loadAttendanceFromSupabase();
-
 }
 
-
-
 function updateUserUI() {
-
   if (!currentUser) return;
-
-
 
   const name = currentUser.name || currentUser.username || "User";
 
   const initial = getInitial(name);
 
-
-
   if ($("topUsername")) $("topUsername").textContent = currentUser.username;
 
-
-
   if ($("topRole")) {
-
     $("topRole").textContent =
-
       currentUser.role === "admin" ? "Administrator" : "Siswa";
-
   }
-
-
 
   if ($("topAvatar")) $("topAvatar").textContent = initial;
 
   if ($("dashboardName")) $("dashboardName").textContent = name;
 
-  if ($("profileUsername")) $("profileUsername").textContent = currentUser.username;
+  if ($("profileUsername"))
+    $("profileUsername").textContent = currentUser.username;
 
-  if ($("profileUsername2")) $("profileUsername2").textContent = currentUser.username;
+  if ($("profileUsername2"))
+    $("profileUsername2").textContent = currentUser.username;
 
   if ($("profileName")) $("profileName").textContent = name;
 
   if ($("profileAvatar")) $("profileAvatar").textContent = initial;
 
-
-
   if ($("profileRole")) {
-
     $("profileRole").textContent =
-
       currentUser.role === "admin" ? "Administrator" : "Siswa";
-
   }
-
 }
-
-
 
 function setupRoleUI() {
-
   const isAdmin = currentUser?.role === "admin";
 
-
-
-  document.querySelectorAll(".admin-only").forEach(el => {
-
+  document.querySelectorAll(".admin-only").forEach((el) => {
     el.classList.toggle("hidden", !isAdmin);
-
   });
 
-
-
-  document.querySelectorAll(".user-only").forEach(el => {
-
+  document.querySelectorAll(".user-only").forEach((el) => {
     el.classList.toggle("hidden", isAdmin);
-
   });
-
 }
-
-
 
 /* NAVIGATION */
 
-
-
 const pageMap = {
-
   dashboard: "page-dashboard",
 
   absen: "page-absen",
@@ -893,14 +590,10 @@ const pageMap = {
 
   profile: "page-profile",
 
-  pengaturan: "page-pengaturan"
-
+  pengaturan: "page-pengaturan",
 };
 
-
-
 const pageTitles = {
-
   dashboard: "Dashboard",
 
   absen: "Absen",
@@ -915,128 +608,72 @@ const pageTitles = {
 
   profile: "Profile",
 
-  pengaturan: "Pengaturan"
-
+  pengaturan: "Pengaturan",
 };
 
-
-
 function setupNavigation() {
-
-  document.querySelectorAll(".nav-item[data-page]").forEach(item => {
-
+  document.querySelectorAll(".nav-item[data-page]").forEach((item) => {
     item.addEventListener("click", () => {
-
       const page = item.dataset.page;
 
-
-
-      if (
-
-        currentUser?.role !== "admin" &&
-
-        ["users", "lokasi"].includes(page)
-
-      ) return;
-
-
+      if (currentUser?.role !== "admin" && ["users", "lokasi"].includes(page))
+        return;
 
       goToPage(page);
 
       closeSidebar();
-
     });
-
   });
-
 }
 
-
-
 function goToPage(page) {
-
-  document.querySelectorAll(".page").forEach(section => {
-
+  document.querySelectorAll(".page").forEach((section) => {
     section.classList.remove("active");
-
   });
-
-
 
   const target = $(pageMap[page]);
 
   if (target) target.classList.add("active");
 
-
-
-  document.querySelectorAll(".nav-item").forEach(item => {
-
+  document.querySelectorAll(".nav-item").forEach((item) => {
     item.classList.remove("active");
 
     if (item.dataset.page === page) item.classList.add("active");
-
   });
 
-
-
   if ($("pageTitle")) {
-
     $("pageTitle").textContent = pageTitles[page] || "Dashboard";
-
   }
-
-
 
   if (page === "dashboard") renderDashboard();
 
   if (page === "siswa") renderStudents();
-
-
 
   if (page === "rekap") renderRecap();
 
   if (page === "users") renderUsers();
 
   if (page === "profile") renderProfile();
-
 }
-
-
 
 function toggleSidebar() {
-
   document.querySelector(".sidebar")?.classList.toggle("open");
-
 }
-
-
 
 function closeSidebar() {
-
   document.querySelector(".sidebar")?.classList.remove("open");
-
 }
-
-
 
 /* LOGOUT */
 
-
-
 async function logout() {
-
   try {
-
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
-
       console.error("Logout Supabase gagal:", error.message);
-
     }
-
   } finally {
-
     stopCamera();
 
     currentUser = null;
@@ -1045,195 +682,116 @@ async function logout() {
 
     attendanceLocation = null;
 
-
-
     localStorage.removeItem("currentUser");
 
     closeSidebar();
 
     showLoginPage();
-
   }
-
 }
-
-
-
-
 
 /* DASHBOARD */
 
-
-
 function renderDashboard() {
-
   if ($("totalStudents")) {
-
     $("totalStudents").textContent = students.length;
-
   }
-
-
 
   const now = new Date();
 
   const today = [
-
     now.getFullYear(),
 
     String(now.getMonth() + 1).padStart(2, "0"),
 
-    String(now.getDate()).padStart(2, "0")
-
+    String(now.getDate()).padStart(2, "0"),
   ].join("-");
 
-
-
-  const todayData = attendance.filter(item => item.date === today);
-
-
+  const todayData = attendance.filter((item) => item.date === today);
 
   if ($("todayPresent")) {
-
-    $("todayPresent").textContent =
-
-      todayData.filter(item => item.status === "Hadir").length;
-
+    $("todayPresent").textContent = todayData.filter(
+      (item) => item.status === "Hadir",
+    ).length;
   }
-
-
 
   if ($("todayPermission")) {
-
-    $("todayPermission").textContent =
-
-      todayData.filter(item => item.status === "Izin").length;
-
+    $("todayPermission").textContent = todayData.filter(
+      (item) => item.status === "Izin",
+    ).length;
   }
 
-
-
   if ($("todaySick")) {
-
-    $("todaySick").textContent =
-
-      todayData.filter(item => item.status === "Sakit").length;
-
+    $("todaySick").textContent = todayData.filter(
+      (item) => item.status === "Sakit",
+    ).length;
   }
 
   if ($("todayAlpa")) {
-
-    $("todayAlpa").textContent =
-
-      todayData.filter(item => item.status === "Alpa").length;
-
+    $("todayAlpa").textContent = todayData.filter(
+      (item) => item.status === "Alpa",
+    ).length;
   }
 
   if ($("todayBolos")) {
-
-    $("todayBolos").textContent =
-
-      todayData.filter(item => item.status === "Bolos").length;
-
+    $("todayBolos").textContent = todayData.filter(
+      (item) => item.status === "Bolos",
+    ).length;
   }
-
 }
-
-
 
 /* ATTENDANCE */
 
-
-
 function setupAttendance() {
-
   $("attendanceForm")?.addEventListener("submit", submitAttendance);
 
   setAttendanceDefaults();
-
 }
 
-
-
 function setAttendanceDefaults() {
-
   const nameInput = $("attendanceName");
 
   const classInput = $("attendanceClass");
 
   const dateInput = $("attendanceDateInput");
 
-
-
   const student =
-
-    students.find(s => s.username === currentUser?.username) ||
-
-    students.find(s => s.name === currentUser?.name);
-
-
+    students.find((s) => s.username === currentUser?.username) ||
+    students.find((s) => s.name === currentUser?.name);
 
   if (nameInput && currentUser) {
-
     nameInput.value = currentUser.name || currentUser.username || "";
-
   }
-
-
 
   if (classInput && student) {
-
     classInput.value = student.className || "";
-
   }
 
-
-
   if (dateInput) {
-
     const today = new Date();
 
     dateInput.value = [
-
       today.getFullYear(),
 
       String(today.getMonth() + 1).padStart(2, "0"),
 
-      String(today.getDate()).padStart(2, "0")
-
+      String(today.getDate()).padStart(2, "0"),
     ].join("-");
-
   }
-
 }
 
-
-
-
-
 async function submitAttendance(e) {
-
   e.preventDefault();
 
-
-
   if (!currentUser || !currentUser.id) {
-
     alert("Sesi login tidak valid. Silakan login ulang.");
 
     return;
-
   }
 
-
-
   const selected = document.querySelector(
-
-    'input[name="attendanceStatus"]:checked'
-
+    'input[name="attendanceStatus"]:checked',
   );
-
-
 
   const status = selected?.value;
 
@@ -1245,58 +803,38 @@ async function submitAttendance(e) {
 
   const note = $("attendanceNote")?.value.trim() || "";
 
-
-
-  if (!status || !["Hadir", "Izin", "Sakit", "Alpa", "Bolos"].includes(status)) {
-
+  if (
+    !status ||
+    !["Hadir", "Izin", "Sakit", "Alpa", "Bolos"].includes(status)
+  ) {
     alert("Pilih status kehadiran yang valid.");
 
     return;
-
   }
 
-
-
   if (!name || !className || !date) {
-
     alert("Nama, kelas, dan tanggal wajib diisi.");
 
     return;
-
   }
 
-
-
   try {
-
     const { data: sessionData, error: sessionError } =
-
       await supabaseClient.auth.getSession();
-
-
 
     if (sessionError) throw sessionError;
 
-
-
     const session = sessionData.session;
 
-
-
     if (!session || session.user.id !== currentUser.id) {
-
       throw new Error("Sesi Supabase tidak cocok. Silakan login ulang.");
-
     }
-
-
 
     const { error } = await supabaseClient
 
       .from("absensi")
 
       .insert({
-
         user_id: session.user.id,
 
         username: currentUser.username,
@@ -1309,18 +847,12 @@ async function submitAttendance(e) {
 
         status: status,
 
-        keterangan: note || null
-
+        keterangan: note || null,
       });
-
-
 
     if (error) throw error;
 
-
-
     const record = {
-
       id: `cloud-${Date.now()}`,
 
       username: currentUser.username,
@@ -1337,55 +869,34 @@ async function submitAttendance(e) {
 
       studentId: null,
 
-      createdAt: new Date().toISOString()
-
+      createdAt: new Date().toISOString(),
     };
-
-
 
     attendance.push(record);
 
     saveAttendance();
 
-
-
     $("attendanceForm")?.reset();
 
     setAttendanceDefaults();
 
-
-
-    document.querySelectorAll(
-
-      'input[name="attendanceStatus"]'
-
-    ).forEach(input => {
-
-      input.checked = false;
-
-    });
-
-
+    document
+      .querySelectorAll('input[name="attendanceStatus"]')
+      .forEach((input) => {
+        input.checked = false;
+      });
 
     renderDashboard();
 
     renderRecap();
 
-
-
     alert("Absensi berhasil disimpan ke Supabase.");
-
   } catch (error) {
-
     console.error("Gagal menyimpan absensi:", error);
 
     alert("Absensi gagal disimpan: " + error.message);
-
   }
-
 }
-
-
 
 /* =====================================================
 
@@ -1393,120 +904,66 @@ async function submitAttendance(e) {
 
 \===================================================== */
 
-
-
-function setupCamera() { }
-
-
+function setupCamera() {}
 
 async function startCamera() {
-
   try {
-
     if (!navigator.mediaDevices?.getUserMedia) {
-
       alert("Browser tidak mendukung kamera.");
 
       return;
-
     }
 
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "user",
 
+        width: { ideal: 1280 },
 
-    cameraStream =
+        height: { ideal: 720 },
+      },
 
-      await navigator.mediaDevices.getUserMedia({
-
-        video: {
-
-          facingMode: "user",
-
-          width: { ideal: 1280 },
-
-          height: { ideal: 720 }
-
-        },
-
-        audio: false
-
-      });
-
-
+      audio: false,
+    });
 
     const video = $("cameraPreview");
 
-
-
     if (!video) return;
-
-
 
     video.srcObject = cameraStream;
 
     video.classList.remove("hidden");
 
-
-
     hide($("cameraPlaceholder"));
 
-
-
     await video.play();
-
-
-
   } catch (error) {
-
     console.error(error);
 
-
-
-    alert(
-
-      "Kamera tidak dapat digunakan. Pastikan izin kamera diberikan."
-
-    );
-
+    alert("Kamera tidak dapat digunakan. Pastikan izin kamera diberikan.");
   }
-
 }
 
-
-
 function takeSelfie() {
-
   const video = $("cameraPreview");
 
   const canvas = $("cameraCanvas");
 
-
-
   if (!video || !canvas) return;
 
-
-
   if (!video.videoWidth) {
-
     alert("Kamera belum siap.");
 
     return;
-
   }
-
-
 
   canvas.width = video.videoWidth;
 
   canvas.height = video.videoHeight;
 
-
-
   const ctx = canvas.getContext("2d");
 
-
-
   ctx.drawImage(
-
     video,
 
     0,
@@ -1515,97 +972,55 @@ function takeSelfie() {
 
     canvas.width,
 
-    canvas.height
-
+    canvas.height,
   );
-
-
 
   selfieData = canvas.toDataURL("image/jpeg", 0.72);
 
-
-
   const preview = $("selfiePreview");
 
-
-
   if (preview) {
-
     preview.src = selfieData;
 
     preview.classList.remove("hidden");
-
   }
-
-
 
   video.classList.add("hidden");
 
-
-
   stopCamera();
-
 }
 
-
-
 function resetCamera() {
-
   stopCamera();
 
-
-
   selfieData = null;
-
-
 
   const video = $("cameraPreview");
 
   const preview = $("selfiePreview");
 
-
-
   if (video) {
-
     video.srcObject = null;
 
     video.classList.add("hidden");
-
   }
 
-
-
   if (preview) {
-
     preview.src = "";
 
     preview.classList.add("hidden");
-
   }
 
-
-
   show($("cameraPlaceholder"));
-
 }
-
-
 
 function stopCamera() {
-
   if (!cameraStream) return;
 
-
-
-  cameraStream.getTracks().forEach(track => track.stop());
-
-
+  cameraStream.getTracks().forEach((track) => track.stop());
 
   cameraStream = null;
-
 }
-
-
 
 /* =====================================================
 
@@ -1613,145 +1028,75 @@ function stopCamera() {
 
 \===================================================== */
 
-
-
-function setupLocation() { }
-
-
+function setupLocation() {}
 
 function getAttendanceLocation() {
-
   if (!navigator.geolocation) {
-
     alert("Browser tidak mendukung lokasi.");
 
     return;
-
   }
-
-
 
   if ($("locationStatus")) {
-
-    $("locationStatus").textContent =
-
-      "Sedang mengambil lokasi...";
-
+    $("locationStatus").textContent = "Sedang mengambil lokasi...";
   }
 
-
-
   navigator.geolocation.getCurrentPosition(
-
-    position => {
-
+    (position) => {
       attendanceLocation = {
-
         latitude: position.coords.latitude,
 
         longitude: position.coords.longitude,
 
         accuracy: position.coords.accuracy,
 
-        timestamp: new Date().toISOString()
-
+        timestamp: new Date().toISOString(),
       };
 
-
-
       if ($("locationStatus")) {
-
-        $("locationStatus").textContent =
-
-          "Lokasi berhasil diambil";
-
+        $("locationStatus").textContent = "Lokasi berhasil diambil";
       }
-
-
 
       if ($("locationText")) {
-
-        $("locationText").textContent =
-
-          `Akurasi ±${Math.round(
-
-            position.coords.accuracy
-
-          )} meter`;
-
+        $("locationText").textContent = `Akurasi ±${Math.round(
+          position.coords.accuracy,
+        )} meter`;
       }
-
     },
 
-
-
-    error => {
-
+    (error) => {
       console.error(error);
 
-
-
       if ($("locationStatus")) {
-
-        $("locationStatus").textContent =
-
-          "Lokasi gagal diambil";
-
+        $("locationStatus").textContent = "Lokasi gagal diambil";
       }
 
-
-
       alert(
-
-        "Lokasi tidak dapat diambil. Pastikan GPS aktif dan izin lokasi diberikan."
-
+        "Lokasi tidak dapat diambil. Pastikan GPS aktif dan izin lokasi diberikan.",
       );
-
     },
 
-
-
     {
-
       enableHighAccuracy: true,
 
       timeout: 15000,
 
-      maximumAge: 0
-
-    }
-
+      maximumAge: 0,
+    },
   );
-
 }
-
-
 
 function resetLocation() {
-
   attendanceLocation = null;
 
-
-
   if ($("locationStatus")) {
-
-    $("locationStatus").textContent =
-
-      "Lokasi belum diambil";
-
+    $("locationStatus").textContent = "Lokasi belum diambil";
   }
-
-
 
   if ($("locationText")) {
-
     $("locationText").textContent = "";
-
   }
-
 }
-
-
 
 /* =====================================================
 
@@ -1759,41 +1104,24 @@ function resetLocation() {
 
 \===================================================== */
 
-
-
 function setupStudentManagement() {
-
   $("studentForm")?.addEventListener("submit", saveStudent);
-
-
 
   $("studentSearch")?.addEventListener("input", renderStudents);
 
-
-
   $("studentCancel")?.addEventListener("click", resetStudentForm);
-
 }
 
-
-
-
-
 async function renderStudents() {
-
   const container = $("studentsTableBody");
 
   if (!container) return;
 
+  const search =
+    $("studentSearch")
+      ?.value.trim()
 
-
-  const search = $("studentSearch")?.value
-
-    .trim()
-
-    .toLowerCase() || "";
-
-
+      .toLowerCase() || "";
 
   container.innerHTML = `
 
@@ -1805,10 +1133,7 @@ async function renderStudents() {
 
   `;
 
-
-
   try {
-
     const { data, error } = await supabaseClient
 
       .from("students")
@@ -1817,40 +1142,27 @@ async function renderStudents() {
 
       .order("nama", { ascending: true });
 
-
-
     if (error) throw error;
 
-
-
-    students = (data || []).map(item => ({
-
+    students = (data || []).map((item) => ({
       id: String(item.id),
 
       nis: item.nis || "",
 
       name: item.nama,
 
-      className: item.kelas
-
+      className: item.kelas,
     }));
 
-
-
-    const filtered = students.filter(student =>
-
+    const filtered = students.filter((student) =>
       `${student.nis} ${student.name} ${student.className}`
 
         .toLowerCase()
 
-        .includes(search)
-
+        .includes(search),
     );
 
-
-
     if (!filtered.length) {
-
       container.innerHTML = `
 
         <tr>
@@ -1864,12 +1176,11 @@ async function renderStudents() {
       renderDashboard();
 
       return;
-
     }
 
-
-
-    container.innerHTML = filtered.map(student => `
+    container.innerHTML = filtered
+      .map(
+        (student) => `
 
       <tr>
 
@@ -1893,18 +1204,14 @@ async function renderStudents() {
 
       </tr>
 
-    `).join("");
-
-
+    `,
+      )
+      .join("");
 
     setupRoleUI();
 
     renderDashboard();
-
-
-
   } catch (error) {
-
     console.error("Gagal memuat siswa:", error);
 
     container.innerHTML = `
@@ -1920,32 +1227,17 @@ async function renderStudents() {
       </tr>
 
     `;
-
   }
-
 }
 
-
-
-
-
-
-
 async function saveStudent(e) {
-
   e.preventDefault();
 
-
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang dapat mengubah data siswa.");
 
     return;
-
   }
-
-
 
   const nis = $("studentNis")?.value.trim() || "";
 
@@ -1953,101 +1245,65 @@ async function saveStudent(e) {
 
   const className = $("studentClass")?.value.trim() || "";
 
-
-
   if (!nis || !name || !className) {
-
     alert("Semua data siswa wajib diisi.");
 
     return;
-
   }
 
-
-
-  const duplicate = students.find(student =>
-
-    student.nis === nis &&
-
-    String(student.id) !== String(editingStudentId)
-
+  const duplicate = students.find(
+    (student) =>
+      student.nis === nis && String(student.id) !== String(editingStudentId),
   );
 
-
-
   if (duplicate) {
-
     alert("NIS sudah digunakan.");
 
     return;
-
   }
 
-
-
   try {
-
     let result;
 
-
-
     if (editingStudentId) {
-
       result = await supabaseClient
 
         .from("students")
 
         .update({
-
           nis,
 
           nama: name,
 
-          kelas: className
-
+          kelas: className,
         })
 
         .eq("id", editingStudentId)
 
         .select();
-
     } else {
-
       result = await supabaseClient
 
         .from("students")
 
         .insert({
-
           nis,
 
           nama: name,
 
-          kelas: className
-
+          kelas: className,
         })
 
         .select();
-
     }
-
-
 
     if (result.error) throw result.error;
 
-
-
     if (!result.data || result.data.length === 0) {
-
       throw new Error("Data tidak tersimpan. Periksa izin Supabase.");
-
     }
 
-
-
     await renderStudents();
-
-
 
     hide($("studentFormContainer"));
 
@@ -2055,47 +1311,26 @@ async function saveStudent(e) {
 
     resetStudentForm();
 
-
-
     alert(
-
       editingStudentId
-
         ? "Data siswa berhasil diperbarui."
-
-        : "Data siswa berhasil ditambahkan ke Supabase."
-
+        : "Data siswa berhasil ditambahkan ke Supabase.",
     );
-
-
-
   } catch (error) {
-
     console.error("Gagal menyimpan siswa:", error);
 
     alert("Gagal menyimpan siswa: " + error.message);
-
   }
-
 }
 
-
-
 function editStudent(id) {
-
   if (currentUser?.role !== "admin") return;
 
-
-
-  const student = students.find(item => String(item.id) === String(id));
+  const student = students.find((item) => String(item.id) === String(id));
 
   if (!student) return;
 
-
-
   editingStudentId = id;
-
-
 
   if ($("studentNis")) $("studentNis").value = student.nis || "";
 
@@ -2103,54 +1338,29 @@ function editStudent(id) {
 
   if ($("studentClass")) $("studentClass").value = student.className || "";
 
-
-
   show($("studentFormContainer"));
-
 }
 
-
-
 async function deleteStudent(id) {
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang bisa menghapus siswa.");
 
     return;
-
   }
 
-
-
-  const student = students.find(
-
-    s => String(s.id) === String(id)
-
-  );
-
-
+  const student = students.find((s) => String(s.id) === String(id));
 
   if (!student) {
-
     alert("Data siswa tidak ditemukan.");
 
     return;
-
   }
-
-
 
   if (!confirm(`Yakin ingin menghapus ${student.name}?`)) {
-
     return;
-
   }
 
-
-
   try {
-
     const { data, error } = await supabaseClient
 
       .from("students")
@@ -2161,63 +1371,31 @@ async function deleteStudent(id) {
 
       .select("id");
 
-
-
     if (error) throw error;
 
-
-
     if (!data || data.length === 0) {
-
-      throw new Error(
-
-        "Data tidak terhapus. Periksa izin DELETE di Supabase."
-
-      );
-
+      throw new Error("Data tidak terhapus. Periksa izin DELETE di Supabase.");
     }
-
-
 
     await renderStudents();
 
     renderDashboard();
 
-
-
     alert("Data siswa berhasil dihapus dari Supabase.");
-
-
-
   } catch (error) {
-
     console.error("Gagal menghapus siswa:", error);
 
     alert("Gagal menghapus siswa: " + error.message);
-
   }
-
 }
 
-
-
-
-
 function resetStudentForm() {
-
   editingStudentId = null;
-
-
 
   $("studentForm")?.reset();
 
-
-
   hide($("studentFormContainer"));
-
 }
-
-
 
 /* =====================================================
 
@@ -2225,22 +1403,14 @@ function resetStudentForm() {
 
 \===================================================== */
 
-
-
 async function renderSchedules() {
-
   const container = $("scheduleList");
 
   if (!container) return;
 
-
-
   container.innerHTML = "<p>Memuat jadwal...</p>";
 
-
-
   try {
-
     const { data, error } = await supabaseClient
 
       .from("schedules")
@@ -2249,14 +1419,9 @@ async function renderSchedules() {
 
       .order("id", { ascending: true });
 
-
-
     if (error) throw error;
 
-
-
-    schedules = (data || []).map(item => ({
-
+    schedules = (data || []).map((item) => ({
       id: String(item.id),
 
       day: item.hari,
@@ -2267,23 +1432,18 @@ async function renderSchedules() {
 
       time: item.jam || "-",
 
-      className: item.kelas || ""
-
+      className: item.kelas || "",
     }));
 
-
-
     if (!schedules.length) {
-
       container.innerHTML = "<p>Belum ada jadwal.</p>";
 
       return;
-
     }
 
-
-
-    container.innerHTML = schedules.map(schedule => `
+    container.innerHTML = schedules
+      .map(
+        (schedule) => `
 
       <div class="schedule-card">
 
@@ -2299,29 +1459,15 @@ async function renderSchedules() {
 
       </div>
 
-    `).join("");
-
-
-
+    `,
+      )
+      .join("");
   } catch (error) {
-
     console.error("Gagal memuat jadwal:", error);
 
-    container.innerHTML =
-
-      `<p>Gagal memuat jadwal: ${escapeHTML(error.message)}</p>`;
-
+    container.innerHTML = `<p>Gagal memuat jadwal: ${escapeHTML(error.message)}</p>`;
   }
-
 }
-
-
-
-
-
-
-
-
 
 /* =====================================================
 
@@ -2329,16 +1475,10 @@ async function renderSchedules() {
 
 \===================================================== */
 
-
-
 async function loadAttendanceFromSupabase() {
-
   if (!currentUser?.id) return;
 
-
-
   try {
-
     const { data, error } = await supabaseClient
 
       .from("absensi")
@@ -2347,14 +1487,9 @@ async function loadAttendanceFromSupabase() {
 
       .order("tanggal", { ascending: false });
 
-
-
     if (error) throw error;
 
-
-
-    attendance = (data || []).map(item => ({
-
+    attendance = (data || []).map((item) => ({
       id: String(item.id),
 
       username: item.username || "",
@@ -2369,79 +1504,47 @@ async function loadAttendanceFromSupabase() {
 
       note: item.keterangan || "",
 
-      createdAt: item.created_at || ""
-
+      createdAt: item.created_at || "",
     }));
-
-
 
     saveAttendance();
 
     renderRecap();
-
-
-
   } catch (error) {
-
     console.error("Gagal memuat rekap Supabase:", error);
 
     alert("Gagal memuat rekap: " + error.message);
-
   }
-
 }
 
-
-
-
-
 function renderRecap() {
-
   const container = $("recapTableBody");
 
   if (!container) return;
 
-
-
   const sorted = [...attendance].sort((a, b) =>
-
     `${b.date} ${b.createdAt || ""}`.localeCompare(
-
-      `${a.date} ${a.createdAt || ""}`
-
-    )
-
+      `${a.date} ${a.createdAt || ""}`,
+    ),
   );
 
+  container.innerHTML = sorted
+    .map((item) => {
+      let jam = "-";
 
+      if (item.createdAt) {
+        jam = new Date(item.createdAt).toLocaleTimeString("id-ID", {
+          hour: "2-digit",
 
-  container.innerHTML = sorted.map(item => {
+          minute: "2-digit",
 
-    let jam = "-";
+          hour12: false,
+        });
+      } else if (item.time) {
+        jam = item.time;
+      }
 
-
-
-    if (item.createdAt) {
-
-      jam = new Date(item.createdAt).toLocaleTimeString("id-ID", {
-
-        hour: "2-digit",
-
-        minute: "2-digit",
-
-        hour12: false
-
-      });
-
-    } else if (item.time) {
-
-      jam = item.time;
-
-    }
-
-
-
-    return `
+      return `
 
       <tr>
 
@@ -2452,13 +1555,15 @@ function renderRecap() {
         <td>${escapeHTML(item.date || "-")}</td>
 
         <td>
-          <span class="status-badge ${({
-            "Hadir": "status-hadir",
-            "Izin": "status-izin",
-            "Sakit": "status-sakit",
-            "Alpa": "status-alpa",
-            "Bolos": "status-bolos"
-          })[item.status] || "status-unknown"}">
+          <span class="status-badge ${
+            {
+              Hadir: "status-hadir",
+              Izin: "status-izin",
+              Sakit: "status-sakit",
+              Alpa: "status-alpa",
+              Bolos: "status-bolos",
+            }[item.status] || "status-unknown"
+          }">
             ${escapeHTML(item.status || "-")}
           </span>
         </td>
@@ -2467,7 +1572,9 @@ function renderRecap() {
 
         <td>
 
-          ${currentUser?.role === "admin" ? `
+          ${
+            currentUser?.role === "admin"
+              ? `
 
             <button
 
@@ -2483,20 +1590,19 @@ function renderRecap() {
 
             </button>
 
-          ` : ""}
+          `
+              : ""
+          }
 
         </td>
 
       </tr>
 
     `;
-
-  }).join("");
-
-
+    })
+    .join("");
 
   if (!sorted.length) {
-
     container.innerHTML = `
 
       <tr>
@@ -2506,35 +1612,21 @@ function renderRecap() {
       </tr>
 
     `;
-
   }
-
 }
-
-
 
 /* USER MANAGEMENT */
 
-
-
 async function renderUsers() {
-
   const container = $("userTableBody");
 
-
-
   if (!container) {
-
     console.error("Elemen userTableBody tidak ditemukan di HTML.");
 
     return;
-
   }
 
-
-
   if (currentUser?.role !== "admin") {
-
     container.innerHTML = `
 
       <tr>
@@ -2546,10 +1638,7 @@ async function renderUsers() {
     `;
 
     return;
-
   }
-
-
 
   container.innerHTML = `
 
@@ -2561,10 +1650,7 @@ async function renderUsers() {
 
   `;
 
-
-
   try {
-
     const { data, error } = await supabaseClient
 
       .from("profiles")
@@ -2573,14 +1659,9 @@ async function renderUsers() {
 
       .order("username", { ascending: true });
 
-
-
     if (error) throw error;
 
-
-
     if (!data || data.length === 0) {
-
       container.innerHTML = `
 
         <tr>
@@ -2592,12 +1673,11 @@ async function renderUsers() {
       `;
 
       return;
-
     }
 
-
-
-    container.innerHTML = data.map(user => `
+    container.innerHTML = data
+      .map(
+        (user) => `
 
       <tr>
 
@@ -2628,9 +1708,7 @@ async function renderUsers() {
         <td>
 
           ${
-
             user.role === "user"
-
               ? `
 
                 <button
@@ -2654,24 +1732,18 @@ async function renderUsers() {
                 </button>
 
               `
-
               : "Admin"
-
           }
 
         </td>
 
       </tr>
 
-    `).join("");
-
-
-
+    `,
+      )
+      .join("");
   } catch (error) {
-
     console.error("Gagal memuat akun:", error);
-
-
 
     container.innerHTML = `
 
@@ -2686,184 +1758,98 @@ async function renderUsers() {
       </tr>
 
     `;
-
   }
-
 }
-
-
-
-
 
 /* RESET PASSWORD PENGGUNA */
 
-
-
 async function resetUserPassword(userId, username) {
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang dapat mereset password.");
 
     return;
-
   }
-
-
 
   if (!confirm(`Reset password untuk akun ${username}?`)) {
-
     return;
-
   }
 
-
-
   const newPassword = prompt(
-
-    `Masukkan password baru untuk ${username} (8–72 karakter):`
-
+    `Masukkan password baru untuk ${username} (8–72 karakter):`,
   );
-
-
 
   if (newPassword === null) return;
 
-
-
   if (newPassword.length < 8 || newPassword.length > 72) {
-
     alert("Password harus terdiri dari 8–72 karakter.");
 
     return;
-
   }
-
-
 
   const confirmation = prompt("Masukkan ulang password baru:");
 
-
-
   if (confirmation === null) return;
 
-
-
   if (newPassword !== confirmation) {
-
     alert("Kedua password tidak cocok.");
 
     return;
-
   }
 
-
-
   try {
-
     const {
-
       data: { session },
 
-      error: sessionError
-
+      error: sessionError,
     } = await supabaseClient.auth.getSession();
-
-
 
     if (sessionError) throw sessionError;
 
-
-
     if (!session || session.user.id !== currentUser.id) {
-
       throw new Error("Sesi admin tidak valid. Silakan login ulang.");
-
     }
 
-
-
     const response = await fetch(
-
       `${SUPABASE_URL}/functions/v1/admin-reset-password`,
 
       {
-
         method: "POST",
 
         headers: {
-
           "Content-Type": "application/json",
 
-          "Authorization": `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${session.access_token}`,
 
-          "apikey": SUPABASE_KEY
-
+          apikey: SUPABASE_KEY,
         },
 
         body: JSON.stringify({
-
           user_id: userId,
 
-          new_password: newPassword
-
-        })
-
-      }
-
+          new_password: newPassword,
+        }),
+      },
     );
-
-
 
     const result = await response.json();
 
-
-
     if (!response.ok) {
-
-      throw new Error(
-
-        result.error || "Reset password gagal."
-
-      );
-
+      throw new Error(result.error || "Reset password gagal.");
     }
 
-
-
-    alert(
-
-      `Password akun ${username} berhasil diperbarui.`
-
-    );
-
-
-
+    alert(`Password akun ${username} berhasil diperbarui.`);
   } catch (error) {
-
     console.error("Reset password gagal:", error);
 
-
-
-    alert(
-
-      "Gagal reset password: " + error.message
-
-    );
-
+    alert("Gagal reset password: " + error.message);
   }
-
 }
-
-
 
 /* =====================================================
 
    PROFILE
 
 \===================================================== */
-
-
 
 function setupProfile() {
   $("editProfileForm")?.addEventListener("submit", updateProfile);
@@ -2873,10 +1859,13 @@ function renderProfile() {
   if (!currentUser) return;
 
   if ($("profileName")) {
-    $("profileName").textContent = currentUser.name || currentUser.username || "-";
+    $("profileName").textContent =
+      currentUser.name || currentUser.username || "-";
   }
-  if ($("profileUsername")) $("profileUsername").textContent = currentUser.username || "-";
-  if ($("profileUsername2")) $("profileUsername2").textContent = currentUser.username || "-";
+  if ($("profileUsername"))
+    $("profileUsername").textContent = currentUser.username || "-";
+  if ($("profileUsername2"))
+    $("profileUsername2").textContent = currentUser.username || "-";
   if ($("editName")) $("editName").value = currentUser.name || "";
   if ($("editUsername")) $("editUsername").value = currentUser.username || "";
   if ($("editPassword")) $("editPassword").value = "";
@@ -2924,9 +1913,11 @@ async function updateProfile(e) {
   }
 
   const oldUsername = currentUser.username;
-  const duplicate = students.some(student =>
-    String(student.username || "").toLowerCase() === username.toLowerCase() &&
-    String(student.username || "").toLowerCase() !== String(oldUsername || "").toLowerCase()
+  const duplicate = students.some(
+    (student) =>
+      String(student.username || "").toLowerCase() === username.toLowerCase() &&
+      String(student.username || "").toLowerCase() !==
+        String(oldUsername || "").toLowerCase(),
   );
 
   if (duplicate) {
@@ -2948,11 +1939,15 @@ async function updateProfile(e) {
 
     if (profileError) throw profileError;
     if (!profileRows || profileRows.length === 0) {
-      throw new Error("Profil tidak dapat diperbarui. Periksa kebijakan RLS tabel profiles.");
+      throw new Error(
+        "Profil tidak dapat diperbarui. Periksa kebijakan RLS tabel profiles.",
+      );
     }
 
     if (password) {
-      const { error: passwordError } = await supabaseClient.auth.updateUser({ password });
+      const { error: passwordError } = await supabaseClient.auth.updateUser({
+        password,
+      });
       if (passwordError) throw passwordError;
     }
 
@@ -2960,11 +1955,11 @@ async function updateProfile(e) {
       ...currentUser,
       username,
       name,
-      ...(profileRows[0].role ? { role: profileRows[0].role } : {})
+      ...(profileRows[0].role ? { role: profileRows[0].role } : {}),
     };
 
-    attendance = attendance.map(item =>
-      item.username === oldUsername ? { ...item, username, name } : item
+    attendance = attendance.map((item) =>
+      item.username === oldUsername ? { ...item, username, name } : item,
     );
 
     saveAttendance();
@@ -2975,7 +1970,9 @@ async function updateProfile(e) {
     alert("Profil berhasil diperbarui.");
   } catch (error) {
     console.error("Gagal memperbarui profil:", error);
-    alert("Profil gagal diperbarui: " + (error.message || "Terjadi kesalahan."));
+    alert(
+      "Profil gagal diperbarui: " + (error.message || "Terjadi kesalahan."),
+    );
   }
 }
 
@@ -2984,8 +1981,6 @@ async function updateProfile(e) {
    SETTINGS
 
 \===================================================== */
-
-
 
 function applyTheme(theme) {
   const light = theme === "light";
@@ -3018,31 +2013,29 @@ function exportData() {
   }
 
   const headers = ["Nama", "Kelas", "Tanggal", "Status", "Keterangan"];
-  const rows = attendance.map(item => [
+  const rows = attendance.map((item) => [
     item.name || "",
     item.className || "",
     item.date || "",
     item.status || "",
-    item.note || ""
+    item.note || "",
   ]);
 
-  const csvCell = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+  const csvCell = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
   const csv = [headers, ...rows]
-    .map(row => row.map(csvCell).join(","))
+    .map((row) => row.map(csvCell).join(","))
     .join("\r\n");
 
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `rekap-absensi-${new Date().toISOString().slice(0,10)}.csv`;
+  link.download = `rekap-absensi-${new Date().toISOString().slice(0, 10)}.csv`;
   document.body.appendChild(link);
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-
-
 
 /* =====================================================
 
@@ -3050,61 +2043,36 @@ function exportData() {
 
 \===================================================== */
 
-
-
 function setupCalendar() {
-
   $("calendarPrev")?.addEventListener("click", () => {
-
     calendarDate.setMonth(calendarDate.getMonth() - 1);
 
     renderCalendar();
-
   });
 
-
-
   $("calendarNext")?.addEventListener("click", () => {
-
     calendarDate.setMonth(calendarDate.getMonth() + 1);
 
     renderCalendar();
-
   });
-
 }
 
-
-
 function renderCalendar() {
-
   const container = $("calendarGrid");
 
   if (!container) return;
-
-
 
   const year = calendarDate.getFullYear();
 
   const month = calendarDate.getMonth();
 
-
-
   if ($("calendarMonth")) {
+    $("calendarMonth").textContent = new Intl.DateTimeFormat("id-ID", {
+      month: "long",
 
-    $("calendarMonth").textContent =
-
-      new Intl.DateTimeFormat("id-ID", {
-
-        month: "long",
-
-        year: "numeric"
-
-      }).format(calendarDate);
-
+      year: "numeric",
+    }).format(calendarDate);
   }
-
-
 
   const firstDay = new Date(year, month, 1).getDay();
 
@@ -3112,59 +2080,36 @@ function renderCalendar() {
 
   const offset = firstDay === 0 ? 6 : firstDay - 1;
 
-
-
   const today = new Date();
 
   const todayKey = [
-
     today.getFullYear(),
 
     String(today.getMonth() + 1).padStart(2, "0"),
 
-    String(today.getDate()).padStart(2, "0")
-
+    String(today.getDate()).padStart(2, "0"),
   ].join("-");
-
-
 
   let html = "";
 
-
-
-  ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].forEach(day => {
-
+  ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].forEach((day) => {
     html += `<div class="calendar-day-name">${day}</div>`;
-
   });
 
-
-
   for (let i = 0; i < offset; i++) {
-
     html += `<div class="calendar-day empty"></div>`;
-
   }
 
-
-
   for (let day = 1; day <= daysInMonth; day++) {
-
     const dateKey = [
-
       year,
 
       String(month + 1).padStart(2, "0"),
 
-      String(day).padStart(2, "0")
-
+      String(day).padStart(2, "0"),
     ].join("-");
 
-
-
     const isToday = dateKey === todayKey;
-
-
 
     html += `
 
@@ -3175,16 +2120,10 @@ function renderCalendar() {
             </div>
 
         `;
-
   }
 
-
-
   container.innerHTML = html;
-
 }
-
-
 
 /* =====================================================
 
@@ -3192,71 +2131,36 @@ function renderCalendar() {
 
 \===================================================== */
 
-
-
 function setupSchoolLocation() {
-
   $("schoolLocationForm")?.addEventListener("submit", saveSchoolLocation);
-
 }
 
-
-
 function renderSchoolLocation() {
-
-  const location = JSON.parse(
-
-    localStorage.getItem("schoolLocation") || "null"
-
-  );
-
-
+  const location = JSON.parse(localStorage.getItem("schoolLocation") || "null");
 
   if (!location) return;
 
-
-
   if ($("schoolLatitude")) {
-
     $("schoolLatitude").value = location.latitude ?? "";
-
   }
-
-
 
   if ($("schoolLongitude")) {
-
     $("schoolLongitude").value = location.longitude ?? "";
-
   }
-
-
 
   if ($("schoolRadius")) {
-
     $("schoolRadius").value = location.radius ?? 100;
-
   }
-
 }
 
-
-
 function saveSchoolLocation(e) {
-
   e.preventDefault();
 
-
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang dapat mengatur lokasi sekolah.");
 
     return;
-
   }
-
-
 
   const latitude = Number($("schoolLatitude")?.value);
 
@@ -3264,51 +2168,33 @@ function saveSchoolLocation(e) {
 
   const radius = Number($("schoolRadius")?.value || 100);
 
-
-
   if (
-
     !Number.isFinite(latitude) ||
-
     !Number.isFinite(longitude) ||
-
     latitude < -90 ||
-
     latitude > 90 ||
-
     longitude < -180 ||
-
     longitude > 180 ||
-
     radius <= 0
-
   ) {
-
     alert("Data lokasi sekolah tidak valid.");
 
     return;
-
   }
 
+  localStorage.setItem(
+    "schoolLocation",
+    JSON.stringify({
+      latitude,
 
+      longitude,
 
-  localStorage.setItem("schoolLocation", JSON.stringify({
-
-    latitude,
-
-    longitude,
-
-    radius
-
-  }));
-
-
+      radius,
+    }),
+  );
 
   alert("Lokasi sekolah berhasil disimpan.");
-
 }
-
-
 
 /* =====================================================
 
@@ -3316,67 +2202,37 @@ function saveSchoolLocation(e) {
 
 \===================================================== */
 
-
-
 function setupModals() {
-
-  document.querySelectorAll("[data-close-modal]").forEach(button => {
-
+  document.querySelectorAll("[data-close-modal]").forEach((button) => {
     button.addEventListener("click", () => {
-
       const modalId = button.dataset.closeModal;
 
       hide($(modalId));
-
     });
-
   });
 
-
-
-  document.querySelectorAll(".modal").forEach(modal => {
-
-    modal.addEventListener("click", e => {
-
+  document.querySelectorAll(".modal").forEach((modal) => {
+    modal.addEventListener("click", (e) => {
       if (e.target === modal) hide(modal);
-
     });
-
   });
 
-
-
-  document.addEventListener("keydown", e => {
-
+  document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
-
-
 
     document.querySelectorAll(".modal").forEach(hide);
 
     closeSidebar();
-
   });
-
 }
-
-
 
 function openModal(id) {
-
   show($(id));
-
 }
-
-
 
 function closeModal(id) {
-
   hide($(id));
-
 }
-
-
 
 /* =====================================================
 
@@ -3384,41 +2240,19 @@ function closeModal(id) {
 
 \===================================================== */
 
-
-
 function toggleUserMenu() {
-
   $("userMenu")?.classList.toggle("hidden");
-
 }
 
-
-
-document.addEventListener("click", e => {
-
+document.addEventListener("click", (e) => {
   const menu = $("userMenu");
 
   const trigger = $("userMenuButton");
 
-
-
-  if (
-
-    menu &&
-
-    !menu.contains(e.target) &&
-
-    !trigger?.contains(e.target)
-
-  ) {
-
+  if (menu && !menu.contains(e.target) && !trigger?.contains(e.target)) {
     menu.classList.add("hidden");
-
   }
-
 });
-
-
 
 /* =====================================================
 
@@ -3426,48 +2260,22 @@ document.addEventListener("click", e => {
 
 \===================================================== */
 
-
-
 function exportAttendanceCSV() {
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang dapat mengekspor data.");
 
     return;
-
   }
 
-
-
   if (!attendance.length) {
-
     alert("Belum ada data absensi.");
 
     return;
-
   }
 
+  const headers = ["Nama", "Kelas", "Tanggal", "Status", "Keterangan"];
 
-
-  const headers = [
-
-    "Nama",
-
-    "Kelas",
-
-    "Tanggal",
-
-    "Status",
-
-    "Keterangan"
-
-  ];
-
-
-
-  const rows = attendance.map(item => [
-
+  const rows = attendance.map((item) => [
     item.name,
 
     item.className,
@@ -3476,43 +2284,24 @@ function exportAttendanceCSV() {
 
     item.status,
 
-    item.note || ""
-
+    item.note || "",
   ]);
 
+  const csvCell = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
 
-
-  const csvCell = value =>
-
-    `"${String(value ?? "").replace(/"/g, '""')}"`;
-
-
-
-  const csv = [
-
-    headers,
-
-    ...rows
-
-  ].map(row => row.map(csvCell).join(",")).join("\r\n");
-
-
+  const csv = [headers, ...rows]
+    .map((row) => row.map(csvCell).join(","))
+    .join("\r\n");
 
   const blob = new Blob(
-
     ["\uFEFF" + csv],
 
-    { type: "text/csv;charset=utf-8;" }
-
+    { type: "text/csv;charset=utf-8;" },
   );
-
-
 
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
-
-
 
   link.href = url;
 
@@ -3524,13 +2313,8 @@ function exportAttendanceCSV() {
 
   link.remove();
 
-
-
   URL.revokeObjectURL(url);
-
 }
-
-
 
 /* =====================================================
 
@@ -3538,49 +2322,27 @@ function exportAttendanceCSV() {
 
 \===================================================== */
 
-
-
 function resetAllData() {
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang dapat mereset data.");
 
     return;
-
   }
 
-
-
-  const confirmed = confirm(
-
-    "Yakin ingin menghapus seluruh data absensi?"
-
-  );
-
-
+  const confirmed = confirm("Yakin ingin menghapus seluruh data absensi?");
 
   if (!confirmed) return;
-
-
 
   attendance = [];
 
   saveAttendance();
 
-
-
   renderDashboard();
 
   renderRecap();
 
-
-
   alert("Data absensi berhasil dihapus.");
-
 }
-
-
 
 /* =====================================================
 
@@ -3588,78 +2350,46 @@ function resetAllData() {
 
 \===================================================== */
 
-
-
 console.log("Script absensi berhasil dimuat.");
 
-
-
 function openStudentModal() {
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang bisa menambah siswa.");
 
     return;
-
   }
-
-
 
   const modal = document.getElementById("studentModal");
 
-
-
   if (!modal) {
-
     alert("Form tambah siswa tidak ditemukan di HTML.");
 
     return;
-
   }
-
-
 
   editingStudentId = null;
 
   document.getElementById("studentForm")?.reset();
 
-
-
   const title = document.getElementById("studentModalTitle");
 
   if (title) title.textContent = "Tambah Siswa";
 
-
-
   modal.classList.remove("hidden");
-
 }
 
-
-
 async function deleteAttendance(id) {
-
   if (currentUser?.role !== "admin") {
-
     alert("Hanya admin yang bisa menghapus absensi.");
 
     return;
-
   }
-
-
 
   if (!confirm("Yakin ingin menghapus data absensi ini?")) {
-
     return;
-
   }
 
-
-
   try {
-
     const { data, error } = await supabaseClient
 
       .from("absensi")
@@ -3670,54 +2400,29 @@ async function deleteAttendance(id) {
 
       .select("id");
 
-
-
     if (error) throw error;
 
     if (!data || data.length === 0) {
-
       alert("Data tidak terhapus. Periksa izin DELETE Supabase.");
 
       return;
-
     }
 
-
-
-    attendance = attendance.filter(
-
-      item => String(item.id) !== String(id)
-
-    );
-
-
+    attendance = attendance.filter((item) => String(item.id) !== String(id));
 
     saveAttendance();
 
-
-
     if (typeof renderDashboard === "function") {
-
       renderDashboard();
-
     }
-
-
-
     renderRecap();
-
-
-
     alert("Data absensi berhasil dihapus.");
-
-
-
   } catch (error) {
-
     console.error("Gagal menghapus absensi:", error);
-
     alert("Gagal menghapus data: " + error.message);
-
   }
+}
 
+function isAdminEntry() {
+  return new URLSearchParams(window.location.search).get("role") === "admin";
 }
