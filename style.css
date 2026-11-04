@@ -3004,7 +3004,7 @@ tbody tr {
   /* Status */
   #page-rekap .recap-student-table th:nth-child(4),
   #page-rekap .recap-student-table td:nth-child(4) {
-    width: 10%;
+    width: 30%;
     white-space: nowrap;
   }
 
@@ -3472,4 +3472,34 @@ body.light-mode .modal { background:rgba(15,23,42,.45)!important; }
     .auth-visual { padding: 22px; }
     .auth-panel { padding: 28px 18px; }
     .auth-copy h2 { font-size: 34px; }
+}
+
+/* REKAP RESPONSIVE HP */
+@media (max-width: 700px) {
+    #page-rekap .recap-card {
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    #page-rekap .recap-table-wrapper {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    #page-rekap .recap-student-table {
+        width: 100%;
+        min-width: 760px;
+        white-space: nowrap;
+        table-layout: auto;
+    }
+
+    #page-rekap .recap-student-table th,
+    #page-rekap .recap-student-table td {
+        white-space: nowrap;
+    }
 }
