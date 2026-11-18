@@ -153,6 +153,108 @@ function $(id) {
   return document.getElementById(id);
 }
 
+
+/* =====================================================
+   TOAST NOTIFICATION
+===================================================== */
+
+function showToast(message, type) {
+  const text = String(message ?? "Terjadi sesuatu.");
+  const lower = text.toLowerCase();
+
+  if (!type) {
+    if (/(berhasil|tersimpan|diperbarui|dihapus|sukses|selesai)/i.test(lower)) {
+      type = "success";
+    } else if (/(gagal|error|tidak valid|tidak dapat|bukan akun|wajib diisi|tidak cocok|tidak ditemukan)/i.test(lower)) {
+      type = "error";
+    } else {
+      type = "info";
+    }
+  }
+
+  let container = document.getElementById("toastContainer");
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toastContainer";
+    container.className = "toast-container";
+    container.setAttribute("aria-live", "polite");
+    container.setAttribute("aria-atomic", "false");
+    (document.body || document.documentElement).appendChild(container);
+  }
+
+  const icons = {
+    success: "✓",
+    error: "×",
+    warning: "!",
+    info: "i",
+  };
+
+  const titles = {
+    success: "Berhasil",
+    error: "Terjadi Kesalahan",
+    warning: "Perhatian",
+    info: "Informasi",
+  };
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+
+  const icon = document.createElement("span");
+  icon.className = "toast-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = icons[type] || icons.info;
+
+  const content = document.createElement("div");
+  content.className = "toast-content";
+
+  const title = document.createElement("strong");
+  title.className = "toast-title";
+  title.textContent = titles[type] || titles.info;
+
+  const description = document.createElement("p");
+  description.className = "toast-message";
+  description.textContent = text;
+
+  const close = document.createElement("button");
+  close.className = "toast-close";
+  close.type = "button";
+  close.setAttribute("aria-label", "Tutup notifikasi");
+  close.textContent = "×";
+
+  const progress = document.createElement("span");
+  progress.className = "toast-progress";
+
+  content.append(title, description);
+  toast.append(icon, content, close, progress);
+  container.appendChild(toast);
+
+  // Batasi jumlah notifikasi agar tidak menumpuk.
+  while (container.children.length > 4) {
+    container.firstElementChild.remove();
+  }
+
+  let dismissed = false;
+  const dismiss = () => {
+    if (dismissed) return;
+    dismissed = true;
+    toast.classList.add("toast-hiding");
+    window.setTimeout(() => toast.remove(), 220);
+  };
+
+  close.addEventListener("click", dismiss);
+  const timer = window.setTimeout(dismiss, 4500);
+  close.addEventListener("click", () => window.clearTimeout(timer), { once: true });
+}
+
+function showWarning(message) {
+  showToast(message, "warning");
+}
+
+// Mengganti alert bawaan browser dengan notifikasi aplikasi.
+window.alert = (message) => showToast(message);
+
+
 function show(el) {
   if (el) el.classList.remove("hidden");
 }
