@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       .from("profiles")
 
-      .select("id, username, role")
+      .select("id, username, name, role")
 
       .eq("id", session.user.id)
 
@@ -316,7 +316,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentUser = {
       id: session.user.id,
       username: profile.username,
-      name: profile.role === "admin" ? "Admin PPLG 1" : profile.username,
+      name:
+        profile.role === "admin"
+          ? "Admin PPLG 1"
+          : profile.name || profile.username,
       role: profile.role,
     };
 
@@ -371,7 +374,7 @@ function setupLogin() {
 
         .from("profiles")
 
-        .select("id, username, role")
+        .select("id, username, name, role")
 
         .eq("id", data.user.id)
 
@@ -389,11 +392,8 @@ function setupLogin() {
 
       currentUser = {
         id: data.user.id,
-
         username: profile.username,
-
-        name: profile.username,
-
+        name: profile.name || profile.username,
         role: "user",
       };
 
